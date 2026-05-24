@@ -1,19 +1,147 @@
-html{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    scroll-behavior: smooth;
+
+
+header{
+    display: flex;
+    height: 720px;
+    background-color: rgb(243, 231, 231);
+    background-size: cover;
+    background-position: center;
+    position: relative;
 }
-.logo{
+
+
+
+.details{
+    font-size: 40px;
+    color: rgb(37, 59, 54);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    position: absolute;
+    margin-left: 50px;
+    margin-top: 400px;
+}
+
+.getstarted{
     display: flex;
     align-items: center;
-    border:4px solid rgba(4,6,8,0.7);
-    border-radius: 50%;
-    margin-left: 500px;
-    margin-top: 0;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 4px 6px 10px rgba(8,10,12,0.5);
-    height: 200px;
-    width: 230px;
+    justify-content: center;
+    border:3px solid rgba(9, 18, 27, 0.8);
+    border-radius: 50px;
+    position:absolute;
+    margin-left: 700px;
+    margin-top: 0px;
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
+    height: 80px;
+    width: 200px;
     transition: all 0.3s ease;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(66, 92, 36, 0.8);
+}   
+
+.getstarted:hover{
+    background-color: rgba(66, 92, 36, 1);
+    transform: scale(1.05);
+    box-shadow: 6px 8px 12px rgba(4, 9, 15, 1);
+}
+
+.getstarted:active{
+    background-color: rgb(13, 15, 9);
+    transform: scale(0.95);
+    box-shadow: 2px 4px 6px rgba(4, 9, 15, 1);
+    cursor:grab;
+}
+
+.first{
+    display: flex;
+    width: 900px;
+    height: 1200px;
+   /* border: 3px solid rgba(9, 18, 27, 0.8);
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
+    */
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    margin-left: 200px;
+    margin-top: 100px;
+}
+
+h2{
+    font-size: 70px;
+    color: rgba(137, 86, 185, 0.8);
+    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.8);
+    margin-left: 250px;
+    margin-top: 50px;
+}
+
+section{
+    width: 90%;
+    height: 2000px;
+    border: 3px solid rgba(255, 253, 251, 0.8);
+    box-shadow: 4px 6px 10px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    margin-left:100px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.signin{
+     display: flex;
+    align-items: center;
+    justify-content: center;
+    border:3px solid rgba(9, 18, 27, 0.8);
+    border-radius: 50px;
+    position:absolute;
+    margin-left: 700px;
+    margin-top: 10px;
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
+    height: 80px;
+    width: 200px;
+    transition: all 0.3s ease;
+    background-color: rgba(201, 124, 61, 0.8);
+}
+
+.signin:hover{
+    background-color: rgb(230, 111, 15);
+    transform: scale(1.05);
+    box-shadow: 6px 8px 12px rgba(4, 9, 15, 1);
+}
+
+.signin:active{
+    background-color: rgb(13, 15, 9);
+    transform: scale(0.95);
+    box-shadow: 2px 4px 6px rgba(4, 9, 15, 1);
+    cursor:grab;
+}
+
+.signup{
+      display: flex;
+    align-items: center;
+    justify-content: center;
+    border:3px solid rgba(9, 18, 27, 0.8);
+    border-radius: 50px;
+    position:absolute;
+    margin-left: 700px;
+    margin-top: 90px;
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
+    height: 80px;
+    width: 200px;
+    transition: all 0.3s ease;
+    background-color: rgba(66, 142, 212, 0.8);
+}
+
+.signup:hover{
+    background-color: rgb(23, 108, 187);
+    transform: scale(1.05);
+    box-shadow: 6px 8px 12px rgba(4, 9, 15, 1);
+}
+
+.signup:active{
+    background-color: rgb(5, 52, 107);
+    transform: scale(0.95);
+    box-shadow: 2px 4px 6px rgba(4, 9, 15, 1);
+    cursor:grab;
 }

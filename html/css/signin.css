@@ -1,0 +1,8 @@
+.welcome{
+     font-size: 40px;
+    color: rgb(37, 59, 54);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    position: absolute;
+    margin-left: 50px;
+    margin-top: 450px;
+}
