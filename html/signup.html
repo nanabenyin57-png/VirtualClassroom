@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="authorr" content="Mr_Tawiah">
+    <title>K_Tawiah Virtual Classroom Signup</title>
+    <link rel="stylesheet" href="css/signup.css">
+    <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+        <header>
+            <div class="logoinfo">
+                <img class="logo" src=" ../html/images/K_TAwiah_LOgo.png" alt="K_Tawiah Logo"/>
+                <h1 class="title">K_Tawiah Virtual Classroom</h1>
+                <p class="details">
+                    <span class="welcome">Welcome to the virtual classroom!</span>
+                </p>
+            </div>
+        </header>
+            <section class="signup" id="sign-up">
+                <form id="signup-form" class="signupform" action="/submitform" method="post">
+                    <label for="firstname" id="firstname">First name</label>
+                    <input type="text" id="firstname" name="firstname" required/>
+                    <label for="middlename" id="midname"> Middle name</label>
+                    <input type="text" id="midname" name="middlename"/>
+                    <label for="lastname" id="lastname">Last name</label>
+                        <input type="text" id="lastname" name="lastname" required/>
+                        <label for="email" id="email">Email</label>
+                        <input type="email" id="email" name="email" required/>
+                        <label for="password" id="password">Password</label>
+                        <input type="password" id="password" name="password" required/>
+                        <label for="confirm-password" id="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required/>
+                        <label for="username" id="username">Username</label>
+                        <input type="text" id="username" name="username" required/>
+                        <button type="submit" id="signup-btn" class="signupbtn">Sign Up</button>
+                </form>
+            </section>
+        <script src="js/signup.js"></script>
+    </body>
