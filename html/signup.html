@@ -8,6 +8,7 @@
     <title>K_Tawiah Virtual Classroom Signup</title>
     <link rel="stylesheet" href="css/signup.css">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="shortcut icon" href="#">
     </head>
     <body>
         <header>
@@ -20,21 +21,42 @@
             </div>
         </header>
             <section class="signup" id="sign-up">
-                <form id="signup-form" class="signupform" action="/submitform" method="post">
-                    <label for="firstname" id="firstname">First name</label>
-                    <input type="text" id="firstname" name="firstname" required/>
-                    <label for="middlename" id="midname"> Middle name</label>
-                    <input type="text" id="midname" name="middlename"/>
-                    <label for="lastname" id="lastname">Last name</label>
-                        <input type="text" id="lastname" name="lastname" required/>
-                        <label for="email" id="email">Email</label>
-                        <input type="email" id="email" name="email" required/>
-                        <label for="password" id="password">Password</label>
-                        <input type="password" id="password" name="password" required/>
-                        <label for="confirm-password" id="confirm-password">Confirm Password</label>
-                        <input type="password" id="confirm-password" name="confirm-password" required/>
-                        <label for="username" id="username">Username</label>
-                        <input type="text" id="username" name="username" required/>
+                <form id="registrationform" class="signupform">
+                    <div>
+                    <label for="first-name">First name</label>
+                    <input type="text" id="first-name" name="firstname" autocomplete="given-name" required/>
+                    <br/><br/>
+                    </div>
+                    <div>
+                    <label for="middle-name"> Middle name</label>
+                    <input type="text" id="middle-name" name="middlename" autocomplete="additional-name"/>
+                    <br/><br/>
+                    </div>
+                    <div>
+                    <label for="last-name">Last name</label>
+                        <input type="text" id="last-name" name="lastname" autocomplete="family-name" required/>
+                        <br/><br/>
+                        </div>
+                        <div>
+                        <label for="e-mail">Email</label>
+                        <input type="email" id="e-mail" name="email" autocomplete="email" required/>
+                            <br/><br/>
+                        </div>
+                        <div>
+                        <label for="user-password">Password</label>
+                        <input type="password" id="user-password" name="password" autocomplete="new-password" required/>
+                        <br/><br/>
+                        </div>
+                        <div>
+                        <label for="confirmpassword">Confirm Password</label>
+                        <input type="password" id="confirmpassword" name="confirm-password" autocomplete="new-password" required/>
+                        <br/><br/>
+                        </div>
+                        <div>
+                        <label for="user-name">Username</label>
+                        <input type="text" id="user-name" name="username" autocomplete="username" required/>
+                        <br/><br/>
+                        </div>
                         <button type="submit" id="signup-btn" class="signupbtn">Sign Up</button>
                 </form>
             </section>

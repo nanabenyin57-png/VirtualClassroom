@@ -9,6 +9,8 @@ body{
     background-position: center;
     margin: 0;
     background-attachment: fixed;
+    height: 2000px;
+    position: relative;
 
 }
 .title{
