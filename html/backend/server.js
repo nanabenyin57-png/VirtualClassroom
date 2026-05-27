@@ -31,8 +31,6 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ success: false, message: "Password is required." });
         }
 
-        // 2. HASH THE PASSWORD SECURELY
-        // 10 salt rounds provides excellent protection against brute-force attacks
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
