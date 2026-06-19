@@ -56,30 +56,30 @@ app.post('/api/register', async (req, res) => {
 
 // 3. Authenticated Login API Endpoint
 app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-        if (!username || !password) {
-            return res.status(400).json({ success: false, message: "Username and password are required." });
+        if (!email || !password) {
+            return res.status(400).json({ success: false, message: "Email and password are required." });
         }
 
         let pool = await sql.connect(dbConfig);
         const result = await pool.request()
-            .input('username', sql.VarChar(50), username)
-            .query('SELECT * FROM Appusers WHERE username = @username');
+            .input('email', sql.VarChar(50), email)
+            .query('SELECT * FROM Appusers WHERE email = @email');
 
         const user = result.recordset;
 
         // If the user profile isn't found in the database shell
         if (!user) {
-            return res.status(401).json({ success: false, message: "Invalid username or password." });
+            return res.status(401).json({ success: false, message: "Invalid email or password." });
         }
 
         // Compare plain-text client input against the database secure hash
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(401).json({ success: false, message: "Invalid username or password." });
+            return res.status(401).json({ success: false, message: "Invalid email or password." });
         }
 
         // Authentication passed! Send profile verification payload to client state
