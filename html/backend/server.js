@@ -69,7 +69,7 @@ app.post('/api/login', async (req, res) => {
             .query('SELECT * FROM Appusers WHERE email = @email');
 
         // FIXED: Extracting the user row directly from the array index
-        const user = result.recordset[0];
+        const user = result.recordset;
 
         // If the user profile isn't found in the database shell
         if (!user) {
@@ -103,20 +103,35 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// 4. Add Notes API Endpoint (Fully Closed & Structured)
 app.post('/api/addnotes', async (req, res) => {
     const { title, content } = req.body;
 
     try {
+        // Validation check for empty input fields
+        if (!title || !content) {
+            return res.status(400).json({ success: false, message: "Title and content are required fields." });
+        }
+
         let pool = await sql.connect(dbConfig);
         await pool.request()
             .input('title', sql.VarChar(100), title)
-            .input('content', sql.Text, content)
+            .input('content', sql.VarChar(sql.MAX), content) // Using sql.VarChar(sql.MAX) for heavy text content in mssql node module
             .query(`
                 INSERT INTO Notes (title, content)
                 VALUES (@title, @content)
             `);
 
-// 4. Start the Server and Keep it Alive
+        // Send a success message back to your frontend
+        res.status(201).json({ success: true, message: "Note added to the classroom database successfully!" });
+
+    } catch (err) {
+        console.error("Notes submission error:", err.message);
+        res.status(500).json({ success: false, message: "Failed to save the note to the database." });
+    }
+});
+
+// 5. Start the Server and Keep it Alive
 const PORT = process.env.PORT || 5000;
 async function startServer() {
     try {
