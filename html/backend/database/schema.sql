@@ -20,4 +20,11 @@ INSERT INTO AppUsers(
 ) VALUES (
     'Godfred', 'Quason', 'Tawiah', 'tawiahgodfredquason', 'nanabenyin57@gmail.com', '$2b$10$UJ9/C6yC/yzkck3yU7cGMevM0kcUVqvRcshj3qdc5CV5InADHX3lS', 'admin'
 );
+USE VirtualClassroom;
 
+ CREATE TABLE Notes(
+    note_id INT IDENTITY(1,1) PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT GETDATE()
+);

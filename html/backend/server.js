@@ -68,7 +68,8 @@ app.post('/api/login', async (req, res) => {
             .input('email', sql.VarChar(50), email)
             .query('SELECT * FROM Appusers WHERE email = @email');
 
-        const user = result.recordset;
+        // FIXED: Extracting the user row directly from the array index
+        const user = result.recordset[0];
 
         // If the user profile isn't found in the database shell
         if (!user) {
@@ -92,7 +93,7 @@ app.post('/api/login', async (req, res) => {
                 lastname: user.lastname,
                 username: user.username,
                 email: user.email,
-                role: user.role // Extremely important to let frontend route matching know if they are 'admin' or 'student'
+                role: user.role
             }
         });
 
@@ -101,6 +102,19 @@ app.post('/api/login', async (req, res) => {
         res.status(500).json({ success: false, message: "An error occurred during authentication." });
     }
 });
+
+app.post('/api/addnotes', async (req, res) => {
+    const { title, content } = req.body;
+
+    try {
+        let pool = await sql.connect(dbConfig);
+        await pool.request()
+            .input('title', sql.VarChar(100), title)
+            .input('content', sql.Text, content)
+            .query(`
+                INSERT INTO Notes (title, content)
+                VALUES (@title, @content)
+            `);
 
 // 4. Start the Server and Keep it Alive
 const PORT = process.env.PORT || 5000;

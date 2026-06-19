@@ -18,10 +18,6 @@ const data=await response.json();
 
 if(data.success){
     alert("Login succesfull! Welcome back, "+data.user.firstname+"!");
-}
-else{
-    alert("Login failed, Please make sure ypur credentials are correct and try again.");
-}
 //redirect ther user to a page based on role
 if(data.user.role==="admin"){
     window.location.href="admin.html";
@@ -29,10 +25,15 @@ if(data.user.role==="admin"){
 else if(data.user.role==="teacher"){
     window.location.href="teacher.html";
 }
-else {
+else{ 
     window.location.href="student.html";
 }
 }
+else{
+    alert("Login failed, Please make sure your credentials are correct and try again.");
+}
+}
+
 catch(err){
     console.error("Error during login:",err);
     alert("An error occurred while trying to log in. Please try again later.");
