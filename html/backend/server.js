@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const sql = require('mssql');
 const cors = require('cors');
-const bcrypt = require('bcrypt'); // 1. Imported the bcrypt hashing library
+const bcrypt = require('bcrypt'); 
 
 const app = express();
 app.use(express.json());
@@ -21,12 +21,11 @@ const dbConfig = {
     }
 };
 
-// 2. The API Endpoint to accept secure sign-ups
+// 2. Registration API Endpoint
 app.post('/api/register', async (req, res) => {
     const { firstname, middlename, lastname, username, email, password } = req.body;
     
     try {
-        // Validation check to make sure password exists before hashing
         if (!password) {
             return res.status(400).json({ success: false, message: "Password is required." });
         }
@@ -41,8 +40,8 @@ app.post('/api/register', async (req, res) => {
             .input('lastname', sql.VarChar(50), lastname)
             .input('username', sql.VarChar(50), username)
             .input('email', sql.VarChar(50), email)
-            .input('password', sql.VarChar(255), hashedPassword) // 3. Passed the secure hash here!
-            .input('role', sql.VarChar(15), 'student') // Default role assignment
+            .input('password', sql.VarChar(255), hashedPassword) 
+            .input('role', sql.VarChar(15), 'student') 
             .query(`
                 INSERT INTO Appusers (firstname, middlename, lastname, username, email, password, role)
                 VALUES (@firstname, @middlename, @lastname, @username, @email, @password, @role)
@@ -55,7 +54,55 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// 3. Start the Server and Keep it Alive
+// 3. Authenticated Login API Endpoint
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        if (!username || !password) {
+            return res.status(400).json({ success: false, message: "Username and password are required." });
+        }
+
+        let pool = await sql.connect(dbConfig);
+        const result = await pool.request()
+            .input('username', sql.VarChar(50), username)
+            .query('SELECT * FROM Appusers WHERE username = @username');
+
+        const user = result.recordset;
+
+        // If the user profile isn't found in the database shell
+        if (!user) {
+            return res.status(401).json({ success: false, message: "Invalid username or password." });
+        }
+
+        // Compare plain-text client input against the database secure hash
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: "Invalid username or password." });
+        }
+
+        // Authentication passed! Send profile verification payload to client state
+        res.status(200).json({
+            success: true,
+            message: "Login successful!",
+            user: {
+                userid: user.userid,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                username: user.username,
+                email: user.email,
+                role: user.role // Extremely important to let frontend route matching know if they are 'admin' or 'student'
+            }
+        });
+
+    } catch (err) {
+        console.error("Login error:", err.message);
+        res.status(500).json({ success: false, message: "An error occurred during authentication." });
+    }
+});
+
+// 4. Start the Server and Keep it Alive
 const PORT = process.env.PORT || 5000;
 async function startServer() {
     try {
