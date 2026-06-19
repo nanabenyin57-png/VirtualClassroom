@@ -20,3 +20,4 @@ INSERT INTO AppUsers(
 ) VALUES (
     'Godfred', 'Quason', 'Tawiah', 'tawiahgodfredquason', 'nanabenyin57@gmail.com', '$2b$10$UJ9/C6yC/yzkck3yU7cGMevM0kcUVqvRcshj3qdc5CV5InADHX3lS', 'admin'
 );
+
