@@ -28,3 +28,5 @@ USE VirtualClassroom;
     content TEXT NOT NULL,
     created_at DATETIME DEFAULT GETDATE()
 );
+
+SELECT * FROM Notes;
