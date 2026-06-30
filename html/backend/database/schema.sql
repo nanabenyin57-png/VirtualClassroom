@@ -31,4 +31,9 @@ USE VirtualClassroom;
 
 SELECT * FROM Notes;
 
+SELECT CONTENT
+FROM Notes 
+Where title='try'
+;
+
 
