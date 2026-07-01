@@ -5,10 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="authorr" content="Mr_Tawiah">
+    
+<script>
+        //check for token
+        const token=localStorage.getItem("token");
+        if(!token){
+            alert("Please login in with your credentials to access the page!");
+            window.location.href="signin.html";
+        }
+    </script>
+
     <title>K_Tawiah Virtual Classroom</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/admin.css">
     <link rel="shortcut icon" href="#">
+
+    
     </head>
     <body>
          <header>

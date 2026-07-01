@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const express = require('express');
 const sql = require('mssql');
@@ -68,8 +69,8 @@ app.post('/api/login', async (req, res) => {
             .input('email', sql.VarChar(50), email)
             .query('SELECT * FROM Appusers WHERE email = @email');
 
-        // FIXED: Extracting the user row directly from the array index
-        const user = result.recordset;
+        //fetch the user records.
+        const user = result.recordset[0];
 
         // If the user profile isn't found in the database shell
         if (!user) {
@@ -88,13 +89,14 @@ app.post('/api/login', async (req, res) => {
             success: true,
             message: "Login successful!",
             user: {
-                userid: user.userid,
+                userid: user.user_id,
                 firstname: user.firstname,
                 lastname: user.lastname,
                 username: user.username,
                 email: user.email,
                 role: user.role
-            }
+            },
+            token: jwt.sign({ userid: user.user_id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' })
         });
 
     } catch (err) {

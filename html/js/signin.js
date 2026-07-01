@@ -18,6 +18,9 @@ const data=await response.json();
 
 if(data.success){
     alert("Login succesfull! Welcome back, "+data.user.firstname+"!");
+
+    //before redirecting the user, the token would be stored here
+    localStorage.setItem("token",data.token);
 //redirect ther user to a page based on role
 if(data.user.role==="admin"){
     window.location.href="admin.html";
