@@ -21,6 +21,7 @@ if(data.success){
 
     //before redirecting the user, the token would be stored here
     localStorage.setItem("token",data.token);
+    localStorage.setItem("firstname", data.user.firstname);
 //redirect ther user to a page based on role
 if(data.user.role==="admin"){
     window.location.href="admin.html";

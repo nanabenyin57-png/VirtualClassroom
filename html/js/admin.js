@@ -1,3 +1,11 @@
+//Add the welcome message
+const welcome=document.getElementById("admin_welcome");
+const user=localStorage.getItem("firstname");
+if(user){
+    welcome.textContent="Welcome "+user+" to the admin dashboard!";
+}
+
+
 document.getElementById('addnotes').addEventListener("submit", async (e)=>{
     e.preventDefault();
 
