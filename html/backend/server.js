@@ -133,6 +133,28 @@ app.post('/api/addnotes', async (req, res) => {
     }
 });
 
+// this code will be used to fetch the heading from the database and display it to the user.
+app.get('/api/course_preview', async(req, res) =>{
+    const{subjectname}=req.query;
+    try{
+
+        if (!subjectname) {
+            return res.status(400).json({ success: false, message: "Subject name is required." });
+        }
+
+         let pool= await sql.connect(dbConfig);
+    const dataheading= await pool.request()
+    .input('subjectname', sql.VARCHAR(50), subjectname)
+    .query('SELECT heading, preview FROM course_preview WHERE subjectname=@subjectname');
+    res.json(dataheading.recordset);
+}
+    
+   catch(err){
+    console.error("Error fetching course preview:", err.message);
+    res.status(500).json({ success: false, message: "Failed to fetch course preview from the database." });
+   }
+});
+
 // 5. Start the Server and Keep it Alive
 const PORT = process.env.PORT || 5000;
 async function startServer() {

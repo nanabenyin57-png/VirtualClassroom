@@ -1,23 +1,43 @@
+//this code is to hide the course preview block when the page loads.
+window.addEventListener("DOMContentLoaded", (event) => {
+    const previewBlock = document.getElementById("course_preview");
+    previewBlock.style.display = "none";
+  });
+
 //This is to preview a couse. 
 const subjectInput=document.getElementById("courses");
 const subjectButton=document.getElementById("course");
+ const previewBlock = document.getElementById("course_preview");
 subjectButton.addEventListener("click", async (e)=>{
     e.preventDefault();
     const subject=subjectInput.value;
-    if(!subject) {
-        alert("Please select a course.");
+    if(!subject){
+        previewBlock.style.display = "none"; // Hide the preview block if no subject is selected
+        alert("Please select a subject to preview.");
         return;
     }
-    else if(subject==="maths"){
-        const preview=document.getElementById("course_preview");
-        preview.innerHTML=`
-        <h2>Mathematics Course Preview</h2>
-        <p>This course covers topics in algebra, geometry, calculus, and statistics.
-         Students will learn problem-solving techniques and mathematical reasoning. this couse moves from high school mathematics 
-         to advanced topics, preparing students for college-level mathematics and beyond. 
-         The course includes interactive lessons, practice exercises, and assessments to track progress.
-         Click on the sign up button to register for the course and start your journey in mathematics!
-         </p>
-        `;
+    try{
+        const response = await fetch(`http://127.0.0.1:5000/api/course_preview?subjectname=${encodeURIComponent(subject)}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if(data.length!==0){
+            const heading = data[0].heading;
+            const preview= data[0].preview;
+            previewBlock.style.display = "block"; // Show the preview block
+                document.getElementById("course_itself").innerHTML = `
+                ${heading}
+            
+            `;
+
+            document.getElementById("course_descriptions").innerHTML = `
+            ${preview}
+            `;  
+        }
+    }
+    catch(err){
+        console.error("Error fetching course preview:", err);
+        alert("Failed to fetch course preview. Please try again later.");
     }
 });

@@ -3,9 +3,6 @@
 header{
     display: flex;
     height: 720px;
-    background-color: rgb(243, 231, 231);
-    background-size: cover;
-    background-position: center;
     position: relative;
 }
 
@@ -74,7 +71,7 @@ h2{
 
 section{
     width: 90%;
-    height: 2400px;
+    height: 1350px;
     border: 3px solid rgba(255, 253, 251, 0.8);
     box-shadow: 4px 6px 10px rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(17px);
@@ -203,4 +200,37 @@ section{
     width: 160px;
     transition: all 0.3s ease;
     background-color: rgba(66, 92, 36, 0.8);
+  }
+
+  .preview{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1400px;
+    height: 600px;
+    position:absolute;
+    margin-top:900px;
+    margin-left: 100px;
+    border:3px solid rgba(9, 18, 27, 0.8);
+    padding:0;
+    background-color: rgba(60, 61, 15, 0.973);
+    color: rgba(235, 227, 227, 0.8);
+    font-size: 40px;
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+
+  }
+  .course_preview{
+    position:absolute;
+    margin-top: 20px;
+  }
+  .course_description{
+    position:absolute;
+    margin-top: 130px;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 40px;
+    text-align: justify;
   }
