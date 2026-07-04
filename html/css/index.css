@@ -74,7 +74,7 @@ h2{
 
 section{
     width: 90%;
-    height: 2000px;
+    height: 2400px;
     border: 3px solid rgba(255, 253, 251, 0.8);
     box-shadow: 4px 6px 10px rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(17px);
@@ -145,3 +145,62 @@ section{
     box-shadow: 2px 4px 6px rgba(4, 9, 15, 1);
     cursor:grab;
 }
+
+.courses{
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    width: 500px;
+    height: 240px;
+    border: 4px solid rgba(22, 21, 21,0.7);
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    background-color: rgba(50, 56, 43, 0.8);
+    position:absolute;
+    margin-left: 480px;
+    margin-top: 200px;
+    font-size: xx-large;
+}
+
+.selector{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    position:absolute;
+    border: 5px solid rgba(9, 18, 27, 0.8);
+    box-shadow: inset;
+    margin-left: 50px;
+    margin-top:-40px;
+    background-color: rgba(50, 56, 43, 0.8);
+    color: rgb(212, 229, 135);
+}
+  .course-h1{
+    position: absolute;
+    margin-top: -130px;
+    margin-left: 400px;
+    font-size: 40px;
+    color:rgb(113, 172, 199);
+    padding-top: -100px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    width: 700px;
+  }
+
+  .view-courses{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border:3px solid rgba(9, 18, 27, 0.8);
+    border-radius: 20px;
+    position:absolute;
+    margin-left: 70px;
+    margin-top: 120px;
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
+    height: 40px;
+    width: 160px;
+    transition: all 0.3s ease;
+    background-color: rgba(66, 92, 36, 0.8);
+  }
