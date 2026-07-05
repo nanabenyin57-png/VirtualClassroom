@@ -1,6 +1,7 @@
 //Add the welcome message
 const welcome=document.getElementById("admin_welcome");
 const user=localStorage.getItem("firstname");
+const token = localStorage.getItem('token'); 
 if(user){
     welcome.textContent="Welcome "+user+" to the admin dashboard!";
 }
@@ -16,7 +17,8 @@ try{
     const response=await fetch("http://127.0.0.1:5000/api/addnotes",{
         method:"POST",
         headers:{
-            "Content-Type":"application/json"
+            "Content-Type":"application/json",
+            "Authorization":`Bearer ${token}`
         },
         body:JSON.stringify({title,content})
     });

@@ -104,9 +104,25 @@ app.post('/api/login', async (req, res) => {
         res.status(500).json({ success: false, message: "An error occurred during authentication." });
     }
 });
+    const authenticateToken = (req, res, next) => {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+
+        if(!token) {
+            return res.status(401).json({ success: false, message: "Access denied. No token provided." });
+        }
+
+        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+            if (err) {
+                return res.status(403).json({ success: false, message: "Invalid or expired token." });
+            }
+            req.user = user;
+            next();
+        });
+    };
 
 // 4. Add Notes API Endpoint (Fully Closed & Structured)
-app.post('/api/addnotes', async (req, res) => {
+app.post('/api/addnotes', authenticateToken, async (req, res) => {
     const { title, content } = req.body;
 
     try {

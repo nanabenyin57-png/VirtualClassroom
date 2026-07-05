@@ -5,10 +5,10 @@ CREATE TABLE course_preview(
     preview Text NOT NULL,
     subjectid INT PRIMARY KEY IDENTITY(1,1),
     heading VARCHAR(50) NOT NULL
-)
+);
 Insert into course_preview(subjectname,preview,heading)
 Values('Math', 'This course covers topics in algebra, geometry, calculus, and statistics.
-         Students will learn problem-solving techniques and mathematical reasoning. this couse moves from high
+         Students will learn problem-solving techniques and mathematical reasoning. This course moves from high
           school mathematics 
          to advanced topics, preparing students for college-level mathematics and beyond. 
          The course includes interactive lessons, practice exercises, and assessments to track progress.
@@ -40,3 +40,4 @@ Values('Math', 'This course covers topics in algebra, geometry, calculus, and st
              The course aims to develop students analytical skills, cultural awareness, and civic responsibility. 
              Click on the sign up button to register for the course and start your journey in social studies!',
              'Social Studies Course Preview');
+
