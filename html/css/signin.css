@@ -1,50 +1,33 @@
 body{
-  
-    background-blend-mode: darken;
-    position: relative;
-    display: flex;
-    
-}
-
-body::before{
-    content: "";
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-      background-image: url("../images/bg.jpeg");
+    background-image: url("../images/vcl.jpg");
     background-size: cover;
     background-position: center;
+    margin: 0;
     background-attachment: fixed;
-    background-repeat: no-repeat;
-    filter: blur(17px);
-    transform: scale(1.1);
-    z-index: -1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .welcome{
+
      font-size: 40px;
     color: rgb(37, 59, 54);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    position: absolute;
-    margin-left: 50px;
-    margin-top: 450px;
 }
 
 .sign_in{
     font-size:42px;
     color:rgba(201, 124, 61, 0.8);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    position: absolute;
-    margin-left: 50px;
-    margin-top: -200px;
 }
 input[type="email"],
 input[type="password"] {
     padding: 14px 20px;
-    width: 300px; 
-    height: 20px;
+    max-width: 300px; 
+    max-height: 20px;
 }
 
 .signin-section{
@@ -52,21 +35,21 @@ input[type="password"] {
     display: flex;
     align-items:center;
     justify-content: center;
-    border:3px solid rgba(9, 18, 27, 0.8);
+    flex-direction: column;
+    border:3px solid rgba(9, 18, 27, 0.014);
     border-radius: 50px;
-    position:absolute;
-    margin-left: 700px;
-    margin-top: 700px;
     backdrop-filter: blur(17px);
     -webkit-backdrop-filter: blur(17px);
     box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
-    height: 450px;
-    width: 760px;
+    max-height: 400px;
+    max-width:  800px;
     transition: all 0.3s ease;
-    background-color: rgba(235, 229, 145, 0.8);
+    background-color: rgba(235, 229, 145, 0.237);
     color: rgb(37, 59, 54);
     font-size: 30px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-left: auto;
+    margin-right: auto;
 
 }
 

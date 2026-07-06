@@ -3,18 +3,7 @@ html{
     scroll-behavior: smooth;
 }
 
-body{
-    background-image: url("../images/vcl.jpg");
-    background-size: cover;
-    background-position: center;
-    margin: 0;
-    background-attachment: fixed;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
+
 .title{
     font-size: 120px;
     color: rgba(103, 73, 116, 0.664);

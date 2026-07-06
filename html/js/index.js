@@ -1,8 +1,30 @@
+
+
+
 //this code is to hide the course preview block when the page loads.
+const hamburgerdisplay=document.getElementById("hamburger_show");
 window.addEventListener("DOMContentLoaded", (event) => {
     const previewBlock = document.getElementById("course_preview");
     previewBlock.style.display = "none";
+    hamburgerdisplay.style.display="none";
   });
+
+//This function is used to display the menu block
+  const HamburgerButton=document.getElementById("hamburger_menu");
+HamburgerButton.addEventListener("click", async (e) =>{
+if(hamburgerdisplay.style.display==="block"){
+    hamburgerdisplay.style.display="none";
+}
+else{
+    hamburgerdisplay.style.display="block";
+}
+});
+
+//to close the menudisplayblock
+const closemenu=document.getElementById("bodyofwork");
+ closemenu.addEventListener("click", async(e)=>{
+    hamburgerdisplay.style.display="none";
+ });
 
 //This is to preview a couse. 
 const subjectInput=document.getElementById("courses");
