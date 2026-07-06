@@ -25,7 +25,11 @@ body{
 }
 input[type="email"],
 input[type="password"] {
-
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
     padding: 14px 20px;
     max-width: 300px; 
     max-height: 20px;
