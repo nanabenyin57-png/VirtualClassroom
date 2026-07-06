@@ -25,6 +25,7 @@ body{
 }
 input[type="email"],
 input[type="password"] {
+
     padding: 14px 20px;
     max-width: 300px; 
     max-height: 20px;
