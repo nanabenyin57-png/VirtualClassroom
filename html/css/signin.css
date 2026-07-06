@@ -29,7 +29,6 @@ input[type="password"] {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 40px;
     padding: 14px 20px;
     max-width: 300px; 
     max-height: 20px;
@@ -46,8 +45,8 @@ input[type="password"] {
     backdrop-filter: blur(17px);
     -webkit-backdrop-filter: blur(17px);
     box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
-    max-height: 400px;
-    max-width:  800px;
+    min-height: 400px;
+    min-width:  800px;
     transition: all 0.3s ease;
     background-color: rgba(235, 229, 145, 0.237);
     color: rgb(37, 59, 54);
@@ -64,9 +63,9 @@ input[type="password"] {
     justify-content: center;
     border:3px solid rgba(9, 18, 27, 0.8);
     border-radius: 50px;
-    position:absolute;
-    margin-left: 150px;
-    margin-top: 20px;
+    margin-left: auto;
+    margin-top: auto;
+    margin-right: auto;
     backdrop-filter: blur(17px);
     -webkit-backdrop-filter: blur(17px);
     box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
