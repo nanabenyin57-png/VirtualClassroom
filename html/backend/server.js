@@ -171,6 +171,11 @@ app.get('/api/course_preview', async(req, res) =>{
    }
 });
 
+//To Load  the topics of the subjects
+ app.get('/api/loadtopics', async(req, res)=>{
+    
+ })
+
 // 5. Start the Server and Keep it Alive
 const PORT = process.env.PORT || 5000;
 async function startServer() {

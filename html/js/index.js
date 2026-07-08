@@ -30,9 +30,10 @@ const closemenu=document.getElementById("bodyofwork");
 const subjectInput=document.getElementById("courses");
 const subjectButton=document.getElementById("course");
  const previewBlock = document.getElementById("course_preview");
+ const subject;
 subjectButton.addEventListener("click", async (e)=>{
     e.preventDefault();
-    const subject=subjectInput.value;
+     subject=subjectInput.value;
     if(!subject){
         previewBlock.style.display = "none"; // Hide the preview block if no subject is selected
         alert("Please select a subject to preview.");
@@ -56,10 +57,23 @@ subjectButton.addEventListener("click", async (e)=>{
             document.getElementById("course_descriptions").innerHTML = `
             ${preview}
             `;  
+
+
         }
     }
     catch(err){
         console.error("Error fetching course preview:", err);
         alert("Failed to fetch course preview. Please try again later.");
     }
+
 });
+
+ const topicsbutton = document.getElementById("loadtopics");
+ const topiclist = document.getElementById("coursetopics");
+ topicsbutton.addEventListener("click", async (e)=>{
+    e.preventDefault();
+    subject= subjectInput.value;
+    
+
+ } )
+
