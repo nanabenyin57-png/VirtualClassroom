@@ -21,6 +21,12 @@
             </div>
         </header>
             <section class="signup" id="sign-up">
+              <select id="role" name="select_role" class="roleselector">
+                <option value="select_role" selected>Select a role </option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+              </select>  
+               <button id="role_selector" class="rolebutton">Select</button>
                 <form id="registrationform" class="signupform">
                     <label for="first-name">First name</label>
                     <input type="text" id="first-name" name="firstname" autocomplete="given-name" required/>
@@ -36,8 +42,10 @@
                     <input type="password" id="confirmpassword" name="confirm-password" autocomplete="new-password" required/>
                     <label for="user-name">Username</label>
                     <input type="text" id="user-name" name="username" autocomplete="username" required/>
+                    <label for="userrole">Role</label>
+                    <input type="text" id="userrole" name="role">
                     <button type="submit" id="signup-btn" class="signupbtn">Sign Up</button>
                 </form>
             </section>
         <script src="js/signup.js"></script>
-        </body.]>
+        </body>

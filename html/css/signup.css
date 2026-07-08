@@ -42,47 +42,74 @@ header{
     display: flex;
     align-items:center;
     justify-content: center;
+    flex-direction: column;
     border:3px solid rgba(9, 18, 27, 0.8);
     border-radius: 50px;
     backdrop-filter: blur(17px);
     -webkit-backdrop-filter: blur(17px);
     box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
-    min-height: 400px;
-    min-width: 300px;
+    min-height: 50px;
+    min-width: 70px;
     transition: all 0.3s ease;
-    background-color: rgba(235, 229, 145, 0.8);
+    background-color: rgba(236, 232, 165, 0.151);
     color: rgb(37, 59, 54);
-    font-size: 30px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     padding: 20px;
 }
+
+.roleselector{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    min-width: 40px;
+    background-color: rgba(243, 149, 149, 0.295);
+    font-size: 30px;
+
+}
+
 .signupform{
     display: grid;
     grid-template-columns: max-content 1fr;
-    gap: 10px 15px;
+    justify-content: center ;
+    align-items: center;
+    gap: 12px 20px;
+    width: 100%;
+    max-width:550px;
+}
+
+.signupform label{
+    font-size: 18px;
+    white-space: nowrap;
+    color: rgb(35, 59,54);
+    font-weight: 600;
 }
 
 input[type="text"], 
 input[type="email"], 
 input[type="password"] {
-    padding: 14px 20px;
-    width: 300px; 
-    height: 20px;
+    padding: 8x 15px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(9, 18, 27, 0.4);
+    width:100%;
+    box-sizing: border-box;
 }
 
 .signupbtn{
-      display: flex;
-    align-items: center;
-    justify-content: center;
-    border:3px solid rgba(9, 18, 27, 0.8);
-    margin-left: auto;
-    
+    border:3px solid rgba(9, 18, 27, 0.4);
     border-radius: 50px;
     backdrop-filter: blur(17px);
     -webkit-backdrop-filter: blur(17px);
-    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
-    height: 80px;
-    width: 200px;
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.367);
+    grid-column: span 2;
+    height: 48px;
+    width: 180px;
     transition: all 0.3s ease;
-    background-color: rgba(201, 124, 61, 0.8);
+    background-color: rgba(201, 124, 61, 0.3);
+    color: rgb(35, 59,54);
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
 }

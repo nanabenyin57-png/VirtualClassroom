@@ -24,7 +24,7 @@ const dbConfig = {
 
 // 2. Registration API Endpoint
 app.post('/api/register', async (req, res) => {
-    const { firstname, middlename, lastname, username, email, password } = req.body;
+    const { firstname, middlename, lastname, username, email, password, role } = req.body;
     
     try {
         if (!password) {
@@ -42,7 +42,7 @@ app.post('/api/register', async (req, res) => {
             .input('username', sql.VarChar(50), username)
             .input('email', sql.VarChar(50), email)
             .input('password', sql.VarChar(255), hashedPassword) 
-            .input('role', sql.VarChar(15), 'student') 
+            .input('role', sql.VarChar(15), role) 
             .query(`
                 INSERT INTO Appusers (firstname, middlename, lastname, username, email, password, role)
                 VALUES (@firstname, @middlename, @lastname, @username, @email, @password, @role)

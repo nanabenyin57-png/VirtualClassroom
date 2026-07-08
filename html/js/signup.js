@@ -1,3 +1,27 @@
+const form = document.getElementById("registrationform");
+window.addEventListener("DOMContentLoaded",(event) =>{
+    form.style.display= "none";
+}) 
+const selector = document.getElementById("role");
+ const rolebutton= document.getElementById("role_selector");
+ let roles_selected = document.getElementById("userrole"); 
+rolebutton.addEventListener("click", async (e) =>{
+    const selection= selector.value;
+    e.preventDefault();
+    if (selection==="select_role"){
+      window.alert("Please choose a role");
+      form.style.display="none";
+    }
+    else if(selection==="student")
+        {
+        form.style.display="block";
+        roles_selected.value=selector.value;
+    }
+    else{
+        form.style.display="block";
+        roles_selected.value=selector.value;
+    }
+})
 
 document.getElementById('registrationform').addEventListener('submit', async (e) => {
     e.preventDefault(); // 1. Stops Chrome from redirecting/reloading the page!
@@ -10,6 +34,7 @@ document.getElementById('registrationform').addEventListener('submit', async (e)
     const email = document.getElementById('e-mail').value;
     const password = document.getElementById('user-password').value;
     const confirmPassword = document.getElementById('confirmpassword').value;
+    const role = document.getElementById('userrole').value;
     if (password !== confirmPassword) {
         alert("❌ Passwords do not match!");
         return;
@@ -28,7 +53,8 @@ document.getElementById('registrationform').addEventListener('submit', async (e)
                 lastname,
                 username,
                 email,
-                password
+                password,
+                role
             })
         });
 
