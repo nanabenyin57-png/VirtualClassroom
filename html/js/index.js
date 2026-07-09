@@ -1,3 +1,4 @@
+const { response } = require("express");
 
 
 
@@ -30,9 +31,10 @@ const closemenu=document.getElementById("bodyofwork");
 const subjectInput=document.getElementById("courses");
 const subjectButton=document.getElementById("course");
  const previewBlock = document.getElementById("course_preview");
+ 
 subjectButton.addEventListener("click", async (e)=>{
     e.preventDefault();
-    const subject= subjectInput.value;
+   const subject=subjectInput.value;
     if(!subject){
         previewBlock.style.display = "none"; 
         alert("Please select a subject to preview.");
@@ -71,24 +73,28 @@ subjectButton.addEventListener("click", async (e)=>{
  const topicsbutton = document.getElementById("loadtopics");
  topicsbutton.addEventListener("click", async (e)=>{
     e.preventDefault();
-    const readsubject= subjectInput.value;
+    const subject= subjectInput.value;
      const topiclist = document.getElementById("coursetopics");
-    if(!readsubject){
+    if(!subject){
         previewBlock.style.display="none";
         alert("Please choose a subject to see the course list");
         return;
     }
     try{
-        const fetchtopics = await fetch(`http://127.0.0.1:5000/api/loadtopics?subjectname=${encodeURIComponent(readsubject)}`);
+        const fetchtopics = await fetch(`http://127.0.0.1:5000/api/loadtopics?subjectname=${encodeURIComponent(subject)}`);
         if (!fetchtopics.ok){
             throw new Error(`http error! status: ${fetchtopics.status}`);
         }
 
-        const topics = await fetchtopics.json();
-        if(topics.length!==0){
-            const topiclistdata = topics[0].topics;
-                 document.getElementById("coursetopics").innerText=topiclistdata;
 
+        const topicsresponse = await fetchtopics.json();
+        if(topicsresponse.success && topicsresponse.topics){
+            document.getElementById("coursetopics").innerText = topicsresponse.topics;
+
+        }
+
+        else{
+            document.getElementById("coursetopics").innerText = "No topics available";
         }
     }
     catch(err){

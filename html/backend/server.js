@@ -149,47 +149,54 @@ app.post('/api/addnotes', authenticateToken, async (req, res) => {
     }
 });
 
-// this code will be used to fetch the heading from the database and display it to the user.
-app.get('/api/course_preview', async(req, res) =>{
-    const{subjectname}=req.query;
-    try{
 
+// 1. Course Preview Endpoint
+app.get('/api/course_preview', async(req, res) =>{
+    const { subjectname } = req.query;
+    try {
         if (!subjectname) {
             return res.status(400).json({ success: false, message: "Subject name is required." });
         }
 
-         let pool= await sql.connect(dbConfig);
-    const dataheading= await pool.request()
-    .input('subjectname', sql.VARCHAR(50), subjectname)
-    .query('SELECT heading, preview FROM course_preview WHERE subjectname=@subjectname');
-    res.json(dataheading.recordset);
-}
-    
-   catch(err){
-    console.error("Error fetching course preview:", err.message);
-    res.status(500).json({ success: false, message: "Failed to fetch course preview from the database." });
-   }
+        let pool = await sql.connect(dbConfig);
+        const dataheading = await pool.request()
+            .input('subjectname', sql.VARCHAR(50), subjectname)
+            .query('SELECT heading, preview FROM course_preview WHERE subjectname=@subjectname');
+        
+        res.json(dataheading.recordset);
+    }
+    catch(err) {
+        console.error("Error fetching course preview:", err.message);
+        res.status(500).json({ success: false, message: "Failed to fetch course preview from the database." });
+    }
 });
 
-//To Load  the topics of the subjects
- app.get('/api/loadtopics', async(req, res)=>{
-    const{subjectname}=req.query;
-        try{
-            if(!subjectname) {
-                return res.status(400).json({success: false, message: "Subject name is required."});
-            }
-            let topicpool = await sql.connect(dbConfig);
-            const topiclist = await topicpool.request()
+// 2. Load Topics Endpoint (ONLY KEEP THIS ONE CLEAN COPY!)
+app.get('/api/loadtopics', async (req, res) => {
+    const { subjectname } = req.query;
+    try {
+        if (!subjectname) {
+            return res.status(400).json({ success: false, message: "Subject name is required." });
+        }
+        
+        let topicpool = await sql.connect(dbConfig);
+        const topiclist = await topicpool.request()
             .input('subjectname', sql.VARCHAR(50), subjectname)
             .query('SELECT topics FROM course_preview WHERE subjectname=@subjectname');
-            res.json(topiclist.recordset);
+            
+        if (topiclist.recordset.length > 0) {
+            return res.json({ success: true, topics: topiclist.recordset[0].topics });
+        } else {
+            return res.status(404).json({
+                success: false, message: "No topics found in this subject."
+            });
         }
-        catch(err){
-            console.error("Error fetching from the database", err.message);
-            res.status(500).json({success: false, message: "Failed to fetch the topic list from the database."})
-        }
- });
-
+    }
+    catch (err) {
+        console.error("Error fetching from the database", err.message);
+        return res.status(500).json({ success: false, message: "Failed to fetch the topic list from the database." });
+    }
+});
 // 5. Start the Server and Keep it Alive
 const PORT = process.env.PORT || 5000;
 async function startServer() {
