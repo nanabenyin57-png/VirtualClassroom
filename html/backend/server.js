@@ -173,8 +173,22 @@ app.get('/api/course_preview', async(req, res) =>{
 
 //To Load  the topics of the subjects
  app.get('/api/loadtopics', async(req, res)=>{
-    
- })
+    const{subjectname}=req.query;
+        try{
+            if(!subjectname) {
+                return res.status(400).json({success: false, message: "Subject name is required."});
+            }
+            let topicpool = await sql.connect(dbConfig);
+            const topiclist = await topicpool.request()
+            .input('subjectname', sql.VARCHAR(50), subjectname)
+            .query('SELECT topics FROM course_preview WHERE subjectname=@subjectname');
+            res.json(topiclist.recordset);
+        }
+        catch(err){
+            console.error("Error fetching from the database", err.message);
+            res.status(500).json({success: false, message: "Failed to fetch the topic list from the database."})
+        }
+ });
 
 // 5. Start the Server and Keep it Alive
 const PORT = process.env.PORT || 5000;

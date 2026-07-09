@@ -30,12 +30,11 @@ const closemenu=document.getElementById("bodyofwork");
 const subjectInput=document.getElementById("courses");
 const subjectButton=document.getElementById("course");
  const previewBlock = document.getElementById("course_preview");
- const subject;
 subjectButton.addEventListener("click", async (e)=>{
     e.preventDefault();
-     subject=subjectInput.value;
+    const subject= subjectInput.value;
     if(!subject){
-        previewBlock.style.display = "none"; // Hide the preview block if no subject is selected
+        previewBlock.style.display = "none"; 
         alert("Please select a subject to preview.");
         return;
     }
@@ -48,7 +47,7 @@ subjectButton.addEventListener("click", async (e)=>{
         if(data.length!==0){
             const heading = data[0].heading;
             const preview= data[0].preview;
-            previewBlock.style.display = "block"; // Show the preview block
+            previewBlock.style.display = "block"; 
                 document.getElementById("course_itself").innerHTML = `
                 ${heading}
             
@@ -67,13 +66,35 @@ subjectButton.addEventListener("click", async (e)=>{
     }
 
 });
+//This fuction is to load the topics in a subjectx,
 
  const topicsbutton = document.getElementById("loadtopics");
- const topiclist = document.getElementById("coursetopics");
  topicsbutton.addEventListener("click", async (e)=>{
     e.preventDefault();
-    subject= subjectInput.value;
-    
+    const readsubject= subjectInput.value;
+     const topiclist = document.getElementById("coursetopics");
+    if(!readsubject){
+        previewBlock.style.display="none";
+        alert("Please choose a subject to see the course list");
+        return;
+    }
+    try{
+        const fetchtopics = await fetch(`http://127.0.0.1:5000/api/loadtopics?subjectname=${encodeURIComponent(readsubject)}`);
+        if (!fetchtopics.ok){
+            throw new Error(`http error! status: ${fetchtopics.status}`);
+        }
 
- } )
+        const topics = await fetchtopics.json();
+        if(topics.length!==0){
+            const topiclistdata = topics[0].topics;
+                 document.getElementById("coursetopics").innerText=topiclistdata;
+
+        }
+    }
+    catch(err){
+        console.error("could not find any topic list", err);
+        alert("could not fetch the topics for that course. Try again later");
+    }
+
+ } );
 
