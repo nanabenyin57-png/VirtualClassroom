@@ -41,23 +41,4 @@ Values('Math', 'This course covers topics in algebra, geometry, calculus, and st
              Click on the sign up button to register for the course and start your journey in social studies!',
              'Social Studies Course Preview');
 
-USE VirtualCLassroom;
-
-SELECT * FROM course_preview;
-
-ALTER TABLE course_preview 
-ADD  topics TEXT;
-
-UPDATE course_preview
-SET topics='1.SET
-2.Fractions
-3.Indices and Standard Form
-4. Algebraic Expressions
-5. Linear Equations
-6. Angles
-7. Perimeter and Area of Plane Shapes
-8. Data Collection and Presentation
-9. Probability of Simple Events
-10. Trigonometry'
-WHERE subjectname='Math';
 

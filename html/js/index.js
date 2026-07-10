@@ -1,4 +1,3 @@
-const { response } = require("express");
 
 
 
@@ -31,12 +30,11 @@ const closemenu=document.getElementById("bodyofwork");
 const subjectInput=document.getElementById("courses");
 const subjectButton=document.getElementById("course");
  const previewBlock = document.getElementById("course_preview");
- 
 subjectButton.addEventListener("click", async (e)=>{
     e.preventDefault();
-   const subject=subjectInput.value;
+     const subject=subjectInput.value;
     if(!subject){
-        previewBlock.style.display = "none"; 
+        previewBlock.style.display = "none"; // Hide the preview block if no subject is selected
         alert("Please select a subject to preview.");
         return;
     }
@@ -48,19 +46,25 @@ subjectButton.addEventListener("click", async (e)=>{
         const data = await response.json();
         if(data.length!==0){
             const heading = data[0].heading;
-            const preview= data[0].preview;
-            previewBlock.style.display = "block"; 
+            const preview = data[0].preview;
+            const topics  = data[0].topics;
+            previewBlock.style.display = "block"; // Show the preview block
                 document.getElementById("course_itself").innerHTML = `
                 ${heading}
             
             `;
-
             document.getElementById("course_descriptions").innerHTML = `
             ${preview}
             `;  
-
+           document.getElementById("coursetopics").innerText= `
+           ${topics}
+           `;
+            
+            document.getElementById("coursetopics").style.display="none";
+            
 
         }
+
     }
     catch(err){
         console.error("Error fetching course preview:", err);
@@ -68,39 +72,18 @@ subjectButton.addEventListener("click", async (e)=>{
     }
 
 });
-//This fuction is to load the topics in a subjectx,
 
- const topicsbutton = document.getElementById("loadtopics");
- topicsbutton.addEventListener("click", async (e)=>{
-    e.preventDefault();
-    const subject= subjectInput.value;
-     const topiclist = document.getElementById("coursetopics");
-    if(!subject){
-        previewBlock.style.display="none";
-        alert("Please choose a subject to see the course list");
-        return;
-    }
-    try{
-        const fetchtopics = await fetch(`http://127.0.0.1:5000/api/loadtopics?subjectname=${encodeURIComponent(subject)}`);
-        if (!fetchtopics.ok){
-            throw new Error(`http error! status: ${fetchtopics.status}`);
-        }
+                   
+            const loadtopics =document.getElementById("loadtopics");
+            loadtopics.addEventListener("click", async (e)=>{
+            
+                if(document.getElementById("coursetopics").style.display==="block"){
+                    document.getElementById("coursetopics").style.display="none";
+                }
+                else{
+                    document.getElementById("coursetopics").style.display="block";
+                }
 
+            });
 
-        const topicsresponse = await fetchtopics.json();
-        if(topicsresponse.success && topicsresponse.topics){
-            document.getElementById("coursetopics").innerText = topicsresponse.topics;
-
-        }
-
-        else{
-            document.getElementById("coursetopics").innerText = "No topics available";
-        }
-    }
-    catch(err){
-        console.error("could not find any topic list", err);
-        alert("could not fetch the topics for that course. Try again later");
-    }
-
- } );
 
