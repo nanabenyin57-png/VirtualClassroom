@@ -48,3 +48,18 @@ SET topics ='
 10. Public Speaking and Debate
 '
 WHERE subjectname='English';
+
+UPDATE course_preview
+SET topics ='
+1. The Environment and Natural Resources
+2. Rights and Responsibilities of Citizens
+3. Needs,Wants, Goods, Services and Occupation in the Community
+4.Globalization and Communication
+5. Climate Change and Pollution
+6. The 1992 Constitution of Ghana and Arms of Government
+7. Money and Banking
+8. Internation Organizations
+9. Population
+10. Peace and Conflict Resolution
+'
+WHERE subjectname='Social Studies';
