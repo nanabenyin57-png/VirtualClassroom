@@ -36,25 +36,27 @@ section{
 .overviewclass{
     display: flex;
     flex-direction: row;
-    align-items: stretch;
-    justify-content: space-between;
-    margin-left: auto;
-    margin-right:auto;
+    align-items: center;
+    justify-content: center;
     min-width: 500px;
-    min-height: 300px;
+    min-height: 100px;
     flex-wrap:wrap;
     background-color: rgba(250, 235, 215, 0.377);
     color: rgba(0, 255, 255, 0.616);
     font-size: 50px;
     padding: 25px;
     border: none;
+    gap: 20px;
+}
+
+.overviewheading{
+ text-align: center;
+ width:100%;
 }
 
 
-
 .buttons1{
-    display:flex;
-    flex-direction: row;
+    align-self: center;
     width: 200px;
     height: 100px;
     border-radius: 30px;
@@ -67,8 +69,7 @@ section{
 }
 
 .buttons2{
-     display:flex;
-    flex-direction: row;
+     align-self: center;
     justify-self: center;
     width: 200px;
     height: 100px;
@@ -79,12 +80,13 @@ section{
     background-color: rgba(91, 147, 196, 0.459);
     box-shadow: 10px 12px  14px rgba(46, 44, 44, 0.397);
     border-color: rgba(240, 248, 255, 0.76);
+    margin-left: auto;
+    margin-right:auto;
 }
 
 .buttons3{
-
-    display:flex;
-    flex-direction: row;
+    align-self: center;
+    justify-self: center;
     width: 200px;
     height: 100px;
     border-radius: 30px;
