@@ -17,5 +17,8 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mssql": "^12.5.4"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true
   }
 }

@@ -1,5 +1,18 @@
+header{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.title{
+    font-size: 40px;
+    margin-left: 12px;
+}
+
 body{
-    background-image: url("../images/back.jpeg");
+    background-color:rgb(243, 236, 236);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -28,7 +41,7 @@ section{
     flex-wrap: wrap;
     max-width: 96%;
     min-height: 90%;
-    background-color: rgba(240, 248, 255, 0.4856);
+    background-color: rgba(252, 252, 252, 0.486);
     border-radius: 14px;
     box-shadow: 10px 12px 14px rgba(22, 22, 22, 0.911);
     backdrop-filter: blur(17px);
@@ -112,6 +125,25 @@ section{
     margin-right: 30px;
     margin-top: 20px;
 }
+.profiledisplay{
+    display:flex;
+    align-items:center;
+    max-width: 150px;
+    min-height: 140px;
+    border: 2px solid;
+    border-radius: 50%;
+    border-color: black;
+}
+
+.button5{
+    width: 80px;
+    height: 40px;
+    border-radius: 20px;
+    font-weight: 500;
+    color: rgba(62, 42, 34, 0.96);
+    background-color: rgba(21, 179, 21, 0.432);
+}
+
 .assignment{
     display: flex;
     flex-direction: column;
@@ -122,7 +154,7 @@ section{
     min-height:340px;
     margin-right: auto;
     margin-left: 40px;
-    
+    margin-top: -30px;
 }
 
 .assignmentarea{
@@ -140,12 +172,12 @@ section{
     border-radius: 30px;
     font-size: 20px;
     font-weight: 600;
-    color: rgba(6, 22, 247, 0.651);
-    background-color: rgba(2, 55, 102, 0.527);
+    color: rgb(231, 199, 157);
+    background-color: rgba(91, 147, 196, 0.527);
     box-shadow: 10px 12px  14px rgba(46, 44, 44, 0.397);
     border-color: rgba(240, 248, 255, 0.76);
     margin-top:30px;
-    
+    margin-left: 60px;
 }
 
 button:hover{
