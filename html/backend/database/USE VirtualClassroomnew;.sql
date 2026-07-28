@@ -1,7 +1,8 @@
 USE VirtualClassroom;
 
-UPDATE course_preview 
-SET subjectname = LTRIM(RTRIM(subjectname));
+ALTER TABLE course_preview
+ ADD topics TEXT;
+
 
 UPDATE course_preview
 SET topics = '
