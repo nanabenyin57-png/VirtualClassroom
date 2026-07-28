@@ -11,6 +11,7 @@ CREATE TABLE AppUsers(
     role VARCHAR(15) NOT NULL
 );
 
+
 SELECT * FROM AppUsers;
 
 USE VirtualClassroom;
@@ -20,6 +21,8 @@ INSERT INTO AppUsers(
 ) VALUES (
     'Godfred', 'Quason', 'Tawiah', 'tawiahgodfredquason', 'nanabenyin57@gmail.com', '$2b$10$UJ9/C6yC/yzkck3yU7cGMevM0kcUVqvRcshj3qdc5CV5InADHX3lS', 'admin'
 );
+
+
 USE VirtualClassroom;
 
  CREATE TABLE Notes(
