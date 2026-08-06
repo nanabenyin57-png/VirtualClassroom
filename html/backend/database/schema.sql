@@ -39,4 +39,8 @@ FROM Notes
 Where title='try'
 ;
 
+USE VirtualClassroom;
+
+SELECT * FROM AppUsers;
+
 
