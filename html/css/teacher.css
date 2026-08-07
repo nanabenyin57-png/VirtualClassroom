@@ -7,12 +7,13 @@ header{
 nav{
     display:flex;
     flex-direction: column;
-
+    margin-right: auto;
 }
 
+
 .navi{
-    width:70px;
-    height: 150px;
+    width:90px;
+    height: 200px;
     background-color: rgba(240, 248, 255, 0.39);
 }
 
@@ -21,7 +22,7 @@ nav{
     width: 80px;
     height: 70px;
     border-radius: 48%;
-    margin-left: 10px;
+    margin-right: auto;
 }
 
 
