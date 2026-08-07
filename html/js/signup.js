@@ -2,25 +2,39 @@ const form = document.getElementById("registrationform");
 window.addEventListener("DOMContentLoaded",(event) =>{
     form.style.display= "none";
 }) 
+let classselected = document.getElementById("_class");
 const selector = document.getElementById("role");
  const rolebutton= document.getElementById("role_selector");
+ const classhead= document.getElementById("classhead");
  let roles_selected = document.getElementById("userrole"); 
 rolebutton.addEventListener("click", async (e) =>{
-    const selection= selector.value;
     e.preventDefault();
+    const selection= selector.value;
     if (selection==="select_role"){
       window.alert("Please choose a role");
       form.style.display="none";
+      classhead.style.display="none";
+      classselected.style.display="none";
+      
+
     }
     else if(selection==="student")
         {
         form.style.display="block";
         roles_selected.value=selector.value;
+            classhead.style.display="block";
+            classselected.style.display="block";
+
     }
     else{
         form.style.display="block";
         roles_selected.value=selector.value;
+        classhead.style.display="none";
+        classselected.style.display="none";
+        
     }
+
+
 })
 
 document.getElementById('registrationform').addEventListener('submit', async (e) => {
@@ -54,7 +68,8 @@ document.getElementById('registrationform').addEventListener('submit', async (e)
                 username,
                 email,
                 password,
-                role
+                role, 
+                classname: classselected.value
             })
         });
 

@@ -34,6 +34,8 @@ app.post('/api/register', async (req, res) => {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+        
+
         let pool = await sql.connect(dbConfig);
         await pool.request()
             .input('firstname', sql.VarChar(50), firstname)
@@ -47,6 +49,21 @@ app.post('/api/register', async (req, res) => {
                 INSERT INTO Appusers (firstname, middlename, lastname, username, email, password, role)
                 VALUES (@firstname, @middlename, @lastname, @username, @email, @password, @role)
             `);
+
+            if (role && role.trim ().toLowerCase()=== 'student') {
+                await pool.request()
+                    .input('firstname', sql.VarChar(50), firstname)
+                    .input('middlename', sql.VarChar(50), middlename || null)
+                    .input('lastname', sql.VarChar(50), lastname)
+                    .input('email', sql.VarChar(50), email)
+                    .input('password', sql.VarChar(255), hashedPassword) 
+                    .input('role', sql.VarChar(15), role) 
+                    .input('classname', sql.Char(4), req.body.classname || null)    
+                    .query(`
+                        INSERT INTO students (firstname, middlename, lastname, email, password, role, classname)
+                        VALUES (@firstname, @middlename, @lastname, @email, @password, @role, @classname)
+                    `);
+            }
 
         res.status(201).json({ success: true, message: "User registered safely and securely!" });
     } catch (err) {
