@@ -49,6 +49,10 @@ document.getElementById('registrationform').addEventListener('submit', async (e)
     const password = document.getElementById('user-password').value;
     const confirmPassword = document.getElementById('confirmpassword').value;
     const role = document.getElementById('userrole').value;
+    let classname = null;
+    if (role === 'student'){
+         classname = document.getElementById('_class').value;
+    }
     if (password !== confirmPassword) {
         alert("❌ Passwords do not match!");
         return;
@@ -69,7 +73,6 @@ document.getElementById('registrationform').addEventListener('submit', async (e)
                 email,
                 password,
                 role, 
-                classname: classselected.value
             })
         });
 
