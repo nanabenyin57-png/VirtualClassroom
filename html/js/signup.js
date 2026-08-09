@@ -73,6 +73,7 @@ document.getElementById('registrationform').addEventListener('submit', async (e)
                 email,
                 password,
                 role, 
+                classname
             })
         });
 
