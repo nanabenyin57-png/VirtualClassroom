@@ -1,45 +1,49 @@
 document.getElementById('signin').addEventListener("submit", async (e)=>{
     e.preventDefault();
     // Handle form submission
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password })
+        });
 
-try{
-const response=await fetch("http://127.0.0.1:5000/api/login",{
-    method:"POST",
-    headers:{
-        "Content-Type":"application/json"
-    },
-    body:JSON.stringify({email,password})
-});
+        const data = await response.json();
 
-const data=await response.json();
+        if (data.success) {
+            alert("Login successful! Welcome back, " + data.user.firstname + "!");
 
-if(data.success){
-    alert("Login succesfull! Welcome back, "+data.user.firstname+"!");
+            // 1. Store the JWT token for authentication headers
+            localStorage.setItem("token", data.token);
+            
+            // 2. Store the full user object so teacher.html can read profileimg on load
+            localStorage.setItem("user", JSON.stringify(data.user));
 
-    //before redirecting the user, the token would be stored here
-    localStorage.setItem("token",data.token);
-    localStorage.setItem("firstname", data.user.firstname);
-//redirect ther user to a page based on role
-if(data.user.role==="admin"){
-    window.location.href="admin.html";
-}
-else if(data.user.role==="teacher"){
-    window.location.href="teacher.html";
-}
-else{ 
-    window.location.href="student.html";
-}
-}
-else{
-    alert("Login failed, Please make sure your credentials are correct and try again.");
-}
-}
+            // Optional: keep existing single property if needed elsewhere
+            localStorage.setItem("firstname", data.user.firstname);
 
-catch(err){
-    console.error("Error during login:",err);
-    alert("An error occurred while trying to log in. Please try again later.");
-}
+            // Redirect the user based on role
+            if (data.user.role === "admin") {
+                window.location.href = "admin.html";
+            }
+            else if (data.user.role === "teacher") {
+                window.location.href = "teacher.html";
+            }
+            else { 
+                window.location.href = "student.html";
+            }
+        }
+        else {
+            alert("Login failed. Please make sure your credentials are correct and try again.");
+        }
+    }
+    catch (err) {
+        console.error("Error during login:", err);
+        alert("An error occurred while trying to log in. Please try again later.");
+    }
 });

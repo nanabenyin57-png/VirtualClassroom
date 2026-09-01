@@ -11,6 +11,9 @@ CREATE TABLE AppUsers(
     role VARCHAR(15) NOT NULL
 );
 
+ALTER TABLE AppUsers
+ADD profileimg VARCHAR(500) NULL;
+
 
 SELECT * FROM AppUsers;
 

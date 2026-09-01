@@ -2,102 +2,100 @@
 <html lang="en">
     <head>
         <title>Teacher Dashboard</title>
-        <meta charset="UTF-8" >
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta description="Author" content="Mr_Tawiah">
+        <meta name="author" content="Mr_Tawiah">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-<script>
-        //check for token
-        const token=localStorage.getItem("token");
-        if(!token){
-            alert("Please login in with your credentials to access the page!");
-            window.location.href="signin.html";
-        }
-        const user_role=JSON.parse(atob(token.split('.')[1]));
-        alert(user_role.role);
-        if(user_role.role!=="teacher"){
-            alert("You are not authorized to access this page!");
-            window.location.href="signin.html";
-        }
-    </script>
+        <script>
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    alert("Please log in with your credentials to access the page!");
+                    window.location.href = "signin.html";
+                } else {
+                    const user_role = JSON.parse(atob(token.split('.')[1]));
+                    if (user_role.role !== "teacher") {
+                        alert("You are not authorized to access this page!");
+                        window.location.href = "signin.html";
+                    }
+                }
+            } catch (err) {
+                console.error("Token verification error:", err);
+                localStorage.removeItem("token");
+                alert("Please sign in with valid credentials.");
+                window.location.href = "signin.html";
+            }
+        </script>
 
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="css/teacher.css">
     </head>
     <body>
-        <nav>
-            <button class="hamburger" id="hamburgermenu"> &#9776;</button>
-            <div class="navi" id="navigation">
-                <ul>
-                    <li>
-                        <a href="index.html">HOME</a>
-                    </li>
-                    <li>
-                        <a href="signin.html">SIGN UP</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
         <header>
             <div class="logoinfo">
                 <img class="logo" src="images/K_TAwiah_LOgo.png" alt="K_Tawiah Logo"/>
                 <h1 class="title">K_Tawiah Virtual Classroom</h1>
                 <p class="details">
-                    <span class="welcome">Welcome to  teacher dashboard!</span>
-                    <br/>
+                    <span class="welcome">Welcome to the teacher dashboard!</span>
                 </p>
+                   <!-- Profile Section -->
+            <div class="profile" id="teacherprofile">
+                <div class="profile-details">
+                    <div class="profiledisplay" id="dp">
+                        <label for="userprofile" class="profile-display" id="avatar">
+                        <img id="profileimg" src="images/default-avatar.jpg" alt="DP">
+                        </label>
+                    </div>
+                    <input type="file" id="userprofile" accept="image/*">
                 </div>
-                </header>
+            <!-- Profile Section -->
+            </div>
+            </div>
+             <nav>
+            <button class="hamburger" id="hamburgermenu">&#9776;</button>
+            <div class="navi" id="navigation">
+                <ul class="links">
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="signin.html">SIGN UP</a></li>
+                </ul>
+            </div>
+        </nav>
+        </header>
 
-                <section class="overview" id="dashboard">
-                    <div class="overviewclass" id="classset">
-                        <h1 class="overviewheading">CLASSES</h1> 
-                        <!--To trigger the class list and activity-->
-                        <button class="buttons1" id="JHS1">JHS1</button>  
-                        <button class="buttons2" id="JHS2">JHS2</button>
-                        <button class="buttons3" id="JHS3">JHS3</button>
-                        <pre class="classinfo" id="classcontent">
-                            <!--Class names and activities come up here.-->
-                        </pre>
-                    </div>
-                    <div class="profile" id="teacherprofile">
-                        <h1>PROFILE</h1>
-                        <p>
-                                              <span class="proilename" id="displayprofilename">
-                                    Hello user
-                                </span>
-                            <div class="profiledisplay" id="dp">
 
-                                <img class="profileimg" src=""  alt="DP">
-                            </div>
-                            <input type="file" id="userprofile">
-                            <button class="button5" id="imgsubmit">Change Profile</button>
-                        </p>
-                    </div>
+        <section class="overview" id="dashboard">
+            <!-- Classes Section -->
+            <div class="overviewclass" id="classset">
+                <h1 class="overviewheading">CLASSES</h1> 
+                <button class="class-btn" data-class="jhs1">JHS1</button>  
+                <button class="class-btn" data-class="jhs2">JHS2</button>
+                <button class="class-btn" data-class="jhs3">JHS3</button>
+                <div class="classinfo" id="classcontent" style="display: none;">
+                    <!-- Dynamic class content renders here -->
+                </div>
+            </div>
+<div class="cards-container">
+            <!-- Assignment Section -->
+            <div class="assignment" id="assignmentcard">
+                <article class="showassignment" id="assignmentgiven">
+                    <h1 class="assignment-heading">ASSIGNMENT</h1>
+                    <textarea class="assignmentarea" id="assignmenttextarea" placeholder="Please enter the assignment here..."></textarea>
+                    <br/>
+                    <button class="button4" id="giveassignment">Give Assignment</button>
+                </article>
+            </div>
 
-                                    <div class="assignment" id="assignmentcard">
-                      
-                                     <article class="showassignment"  id="assignmentgiven">
-                                        <h1 class="assignment-heading"> ASSIGNMENT</h1>
-                                        <textarea class="assignmentarea"  id="assignmenttextarea">
-                                          Please enter the assignment here.
-                                        </textarea>
-                                         <br/>
-                                         <button class="button4" id="giveassignment">  Give Assignment</button>
+            <!-- Topics  Section -->
+            <div class="Topics" id="Topicslist">
+                <h1>TOPICS</h1>
+                <div class="courses-content">
+                    <!-- Reserved for course outline and materials -->
+                </div>
+            </div>
+            </div>
+        </section>
 
-                                    </article>
-                                    </div>
-
-                    <div class="courses" id="courseslist">
-                        <h1>COURSES</h1>
-                        <p class="courses">
-                            <!-- This space would be reserved for course outline, upcoming classes and course related materials-->
-
-                        </p>
-                    </div>
-                </section>
-
-                    <script src="js/teacher.js"></script>
+        <script src="js/teacher.js"></script>
     </body>
 </html>

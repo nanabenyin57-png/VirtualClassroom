@@ -1,217 +1,278 @@
-header{
-    display:flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-nav{
-    display:flex;
-    flex-direction: column;
-    margin-right: auto;
-}
 
-
-.navi{
-    width:90px;
-    height: 200px;
-    background-color: rgba(240, 248, 255, 0.39);
-}
-
-
-.logo{
-    width: 80px;
-    height: 70px;
-    border-radius: 48%;
-    margin-right: auto;
-}
-
-
-.title{
-    font-size: 60px;
-    margin-left: 12px;
-    margin-top: 20px;
-    color: rgba(38, 83, 38, 0.945);
-}
-
-body{
-    background-color:rgb(238, 228, 228);
-    color:rgba(38, 83, 38, 0.945);
-    text-shadow: rgba(0, 0, 0, 0.7) 3px 4px 5px;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: wrap;
-    min-height: 300px;
-    min-width: 400px
-}
-
-
-.welcome{
-    font-size: 60px;
-    font-weight: bolder;
-    font-family: Georgia, 'Times New Roman', Times, serif;
+:root {
     
+    --bg-main: #005B96;          
+    --header-title: #74B9FF;     
+    --text-primary: #2C2825;     
+    --brand-warm: #A0522D;       
+    --btn-primary: #005B96;      
+    --btn-accent: #C89D7A;       
+    --copper-accent: #B87333;    
+    --btn-hover: #944700;        
+    --border-warm: #E5DCCF;      
 }
 
 
-section{
-    display:flex;
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: #FFFFFF;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+
+header {
+    display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    max-width: 90%;
-    min-height: 90%;
-    background-color: rgba(252, 252, 252, 0.486);
-    border-radius: 14px;
-    box-shadow: 10px 12px 14px rgba(22, 22, 22, 0.911);
-    backdrop-filter: blur(17px);
-    padding:25px;
+    justify-content: space-between;
+    width: 100%;
+    height:140px;
+    margin-top: 13px;
+    margin-bottom: 18px;
 }
-.overviewclass{
+
+.profile{
+    display: flex;
+    flex-direction: row;
+    margin-right: 100px;
+}\.profiledisplay {
+    width: 60px;
+    height: 60px;
+    border: 3px solid var(--copper-accent);
+    border-radius: 50%;
+    overflow: hidden; /* Clips any overflowing image edges */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-display {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.profileimg, #profileimg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Keeps avatar aspect ratio clean without stretching */
+    border-radius: 50%;
+}
+
+input{
+    display: none;
+}
+
+.logoinfo{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.details{
+margin-top: -8px;
+margin-left: 20px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: auto;
+    margin-left: 0;
+    margin-top: 0;
+}
+
+.title {
+    font-size: clamp(24px, 5vw, 40px);
+    margin: 0 0 0 12px;
+    color: var(--header-title);
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 0;
+}
+
+.hamburger {
+    width: 40px;
+    height: 40px;
+}
+
+.navi {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-width: 200px;
+    max-width: 380px;
+    background-color: rgba(116, 185, 255, 0.2);
+    border-radius: 8px;
+    top:50px;
+    right:0;
+    z-index:100;
+}
+.links{
+    margin-left: 5px;
+}
+
+.welcome {
+    font-size: clamp(28px, 6vw, 48px);
+    font-weight: 700;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #FFFFFF;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Main Section Card (Warm Learning Canvas) */
+section {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    width: 80%;
-    min-height: 100px;
-    flex-wrap:wrap;
-    font-size: 50px;
-    padding: 25px;
-    border: none;
+    flex-wrap: wrap;
+    width: 100%;
+    background-color: #3283b9;
+    color: var(--text-primary);
+    
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border-warm);
+    padding: 20px;
     gap: 20px;
 }
 
-.overviewheading{
- text-align: center;
- width:100%;
-}
-
-
-.buttons1{
-    align-self: center;
-    width: 200px;
-    height: 100px;
-    border-radius: 30px;
-    margin-left: auto;
-    font-size: 50px;
-    font-weight: 500;
-    background-color: rgba(91, 147, 196, 0.459);
-    box-shadow: 10px 12px  14px rgba(46, 44, 44, 0.397);
-    border-color: rgba(240, 248, 255, 0.76);
-}
-
-
-.buttons2{
-     align-self: center;
-    justify-self: center;
-    width: 200px;
-    height: 100px;
-    border-radius: 30px;
-    font-size: 50px;
-    font-weight: 500;
-    background-color: rgba(91, 147, 196, 0.459);
-    box-shadow: 10px 12px  14px rgba(46, 44, 44, 0.397);
-    border-color: rgba(240, 248, 255, 0.76);
-    margin-left: auto;
-    
-}
-
-
-.buttons3{
-    align-self: center;
-    justify-self: center;
-    width: 200px;
-    height: 100px;
-    border-radius: 30px;
-    font-size: 50px;
-    font-weight: 500;
-    background-color: rgba(91, 147, 196, 0.459);
-    box-shadow: 10px 12px  14px rgba(46, 44, 44, 0.397);
-    border-color: rgba(240, 248, 255, 0.76);
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
-.profile{
-    align-self:normal ;
-    min-width: 400px;
-    min-height: 300px;
-    padding: 25px;
-    margin-right: 30px;
-    margin-top: 20px;
-}
-.profiledisplay{
-    display:flex;
-    align-items:center;
-    max-width: 150px;
-    min-height: 140px;
-    border: 2px solid;
-    border-radius: 50%;
-    border-color: black;
-}
-
-.button5{
-    width: 80px;
-    height: 40px;
-    border-radius: 20px;
-    font-weight: 500;
-    background-color: rgba(21, 179, 21, 0.432);
-}
-
-.assignment{
+.overviewclass {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    align-self: center;
-    min-width: 560px;
-    min-height:340px;
-    margin-right: auto;
-    margin-left: 40px;
-    margin-top: -30px;
+    width: 100%;
+    flex-wrap: wrap;
+    font-size: clamp(20px, 4vw, 32px);
+    padding: 15px;
+    gap: 15px;
+    border: outset 2px var(--border-warm);
+    box-shadow: 2px 5px 20px ;
 }
 
-.assignmentarea{
-    min-width: 300px;
-    min-height: 80px;
-    font-size: 18px;
-    
+.overviewheading {
+    text-align: center;
+    width: 100%;
+    color: var(--brand-warm);
+}
+.classinfo{
+    text-align: justify;
+    width: 100%;
+    min-width: 200px
+}
+/* Add this wrapper class to align the 3 cards side-by-side */
+.cards-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
-.button4{
-    align-self: center;
-    justify-self: center;
-    width: 180px;
-    height: 80px;
-    border-radius: 30px;
+/* Remove margins and fixed alignments that pull the cards off-center */
+.assignment, .courses {
+
+    width:100%;
+    max-width: 300px;
+    flex: 1 1 200px;
+}
+
+
+
+.profiledisplay {
+    width: 60px;
+    height: 60px;
+    border: 3px solid var(--copper-accent);
+    border-radius: 50%;
+}
+
+.assignmentarea {
+    width: 100%;
+    min-height: 100px;
+    font-size: 16px;
+    border: 1px solid var(--border-warm);
+    border-radius: 8px;
+    padding: 12px;
+    background-color: #FFFFFF;
+    color: var(--text-primary);
+}
+
+button {
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    border: solid 2px rgb(73, 73, 60);
+    color: #FFFFFF;
+      width: 100%;
+    max-width: 220px;
+    height: 60px;
+    border-radius: 12px;
     font-size: 20px;
     font-weight: 600;
-    background-color: rgba(91, 147, 196, 0.527);
-    box-shadow: 10px 12px  14px rgba(46, 44, 44, 0.397);
-    border-color: rgba(240, 248, 255, 0.76);
-    margin-top:30px;
-    margin-left: 60px;
+    background-color: var(--btn-primary);
+    box-shadow: 0 4px 10px rgba(0, 91, 150, 0.3);
 }
 
-button:hover{
-    background-color: rgba(240, 248, 255, 0.76);
 
+button:hover {
+    background-color: var(--btn-hover);
+    color: #FFFFFF;
+}
+/*mobile screen*/
+@media screen and (max-width: 599px) {
+    section {
+        padding: 15px 10px;
+    }
+
+    .assignment, .courses, .profile {
+        margin: 0;
+        min-width: 100%;
+    }
 }
 
-.courses{
-    margin-top: 35px;
-    align-self: center;
-    margin-right: auto;
-    min-width: 560px;
-    min-height: 240px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* Tablet Screens (600px - 1023px) */
+@media screen and (min-width: 600px) and (max-width: 1023px) {
+    section {
+        padding: 24px;
+    }
 
+    .class-btn {
+        width: 200px;
+    }
 }
 
+/* Desktop Screens (1024px and above) */
+@media screen and (min-width: 1024px) {
+    section {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 35px;
+    }
+
+    .profile {
+        align-self: flex-start;
+    }
+}

@@ -8,14 +8,15 @@ CREATE TABLE students(
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(256) NOT NULL,
     classname CHAR(4) NOT NULL,
-    userid INT REFERENCES AppUsers(user_id)
+    userid INT REFERENCES AppUsers(user_id),
+    role VARCHAR(15) 
     );
 
     
     DELETE FROM AppUsers
     WHERE role='student';
 
-
+DROP TABLE IF EXISTS students;
     
 
     SELECT * FROM students;
