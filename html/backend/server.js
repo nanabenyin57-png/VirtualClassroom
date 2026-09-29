@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 // Serve static images so frontend can view uploaded photos via HTTP URL
-app.use('/uploads',cors(), express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', cors(), express.static(path.join(__dirname, 'uploads')));
 
 // Ensure uploads folder exists
 const uploadDir = path.join(__dirname, 'uploads');
@@ -56,9 +56,7 @@ const dbConfig = {
     }
 };
 
-
 // JWT Middleware
-
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -76,20 +74,16 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// -------------------------------------------------------------
-// NEW: Profile Picture Upload Endpoint
-// -------------------------------------------------------------
+// Profile Picture Upload
 app.post('/api/upload-profile-image', authenticateToken, upload.single('profileimg'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No image file uploaded.' });
         }
 
-        // Construct public URL
         const imageUrl = `http://127.0.0.1:${process.env.PORT || 5000}/uploads/${req.file.filename}`;
-        const userId = req.user.userid; // Extracted from JWT token via authenticateToken middleware
+        const userId = req.user.userid; 
 
-        // Update user record in SQL Server database
         let pool = await sql.connect(dbConfig);
         await pool.request()
             .input('profileimg', sql.VarChar(500), imageUrl)
@@ -112,9 +106,7 @@ app.post('/api/upload-profile-image', authenticateToken, upload.single('profilei
     }
 });
 
-// -------------------------------------------------------------
 // 2. Registration API Endpoint
-// -------------------------------------------------------------
 app.post('/api/register', async (req, res) => {
     const { firstname, middlename, lastname, username, email, password, role, classname } = req.body;
 
@@ -188,9 +180,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// -------------------------------------------------------------
 // 3. Authenticated Login API Endpoint
-// -------------------------------------------------------------
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -237,36 +227,8 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// -------------------------------------------------------------
-// 4. Add Notes API Endpoint
-// -------------------------------------------------------------
-app.post('/api/addnotes', authenticateToken, async (req, res) => {
-    const { title, content } = req.body;
-
-    try {
-        if (!title || !content) {
-            return res.status(400).json({ success: false, message: "Title and content are required fields." });
-        }
-
-        let pool = await sql.connect(dbConfig);
-        await pool.request()
-            .input('title', sql.VarChar(100), title)
-            .input('content', sql.VarChar(sql.MAX), content)
-            .query(`
-                INSERT INTO Notes (title, content)
-                VALUES (@title, @content)
-            `);
-
-        res.status(201).json({ success: true, message: "Note added to the classroom database successfully!" });
-
-    } catch (err) {
-        console.error("Notes submission error:", err.message);
-        res.status(500).json({ success: false, message: "Failed to save the note to the database." });
-    }
-});
-
 // Course preview endpoint
-app.get('/api/course_preview', async(req, res) => {
+app.get('/api/course_preview', async (req, res) => {
     const { subjectname } = req.query;
     try {
         if (!subjectname) {
@@ -282,6 +244,33 @@ app.get('/api/course_preview', async(req, res) => {
     } catch(err) {
         console.error("Error fetching course preview:", err.message);
         res.status(500).json({ success: false, message: "Failed to fetch course preview from the database." });
+    }
+});
+
+// Get Topics Endpoint (Required for dynamic topic dropdown population)
+app.post('/api/get-topics', authenticateToken, async (req, res) => {
+    const { subjectname } = req.body;
+    try {
+        if (!subjectname) {
+            return res.status(400).json({ success: false, message: "Subject name is required." });
+        }
+
+        let pool = await sql.connect(dbConfig);
+        const result = await pool.request()
+            .input('subjectname', sql.VarChar(50), subjectname)
+            .query('SELECT topics FROM course_preview WHERE subjectname = @subjectname');
+
+        if (result.recordset.length === 0 || !result.recordset[0].topics) {
+            return res.status(404).json({ success: false, message: "No topics found for this subject." });
+        }
+
+        res.status(200).json({
+            success: true,
+            topics: result.recordset[0].topics
+        });
+    } catch (err) {
+        console.error("Error fetching topics:", err.message);
+        res.status(500).json({ success: false, message: "Server error while fetching topics." });
     }
 });
 
@@ -323,9 +312,72 @@ app.post('/api/classlist', authenticateToken, async (req, res) => {
     }
 });
 
-// -------------------------------------------------------------
+// Give Assignment API Endpoint
+app.post('/api/add-assignment', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'teacher') {
+            return res.status(403).json({ success: false, message: "Unauthorized access" });
+        }
+
+        const { subjectname, classname, title, content } = req.body;
+
+        if (!subjectname || !classname || !content) {
+            return res.status(400).json({ success: false, message: "Subject, Class, and Content are required fields." });
+        }
+
+        const pool = await sql.connect(dbConfig);
+        await pool.request()
+            .input('subjectname', sql.VarChar, subjectname)
+            .input('classname', sql.VarChar, classname)
+            .input('title', sql.VarChar, title || 'Assignment')
+            .input('content', sql.Text, content)
+            .query(`
+                INSERT INTO Assignments (subjectname, classname, title, content)
+                VALUES (@subjectname, @classname, @title, @content)
+            `);
+
+        res.status(200).json({ success: true, message: "Assignment successfully posted to the class!" });
+    } catch (err) {
+        console.error("Error adding assignment:", err);
+        res.status(500).json({ success: false, message: "Server error while posting assignment." });
+    }
+});
+
+// Unified Add Class Notes API Endpoint (Linked to Subject, Topic, and Class)
+app.post('/api/add-note', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'teacher') {
+            return res.status(403).json({ success: false, message: "Unauthorized access" });
+        }
+
+        const { subjectname, topicname, classname, title, content } = req.body;
+
+        if (!subjectname || !topicname || !classname || !title || !content) {
+            return res.status(400).json({ success: false, message: "All fields (Subject, Topic, Class, Title, and Content) are required." });
+        }
+
+        const pool = await sql.connect(dbConfig);
+        await pool.request()
+            .input('subjectname', sql.VarChar, subjectname)
+            .input('topicname', sql.VarChar, topicname)
+            .input('classname', sql.VarChar, classname)
+            .input('title', sql.VarChar, title)
+            .input('content', sql.Text, content)
+            .query(`
+                INSERT INTO ClassNotes (subjectname, topicname, classname, title, content)
+                VALUES (@subjectname, @topicname, @classname, @title, @content)
+            `);
+
+        res.status(200).json({ success: true, message: "Note successfully added and linked to the topic!" });
+    } catch (err) {
+        console.error("Error adding note:", err);
+        res.status(500).json({ success: false, message: "Server error while adding note." });
+    }
+});
+
+
 // 5. Start Server
-// -------------------------------------------------------------
+
 const PORT = process.env.PORT || 5000;
 async function startServer() {
     try {

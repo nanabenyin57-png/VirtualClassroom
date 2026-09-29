@@ -1,14 +1,14 @@
-const menu = document.getElementById('hamburgermenu'); //[cite: 6]
-const navigation = document.getElementById('navigation'); //[cite: 6]
-const classcontent = document.getElementById("classcontent"); //[cite: 6]
+const menu = document.getElementById('hamburgermenu');
+const navigation = document.getElementById('navigation');
+const classcontent = document.getElementById("classcontent");
 
 // Run once when DOM is fully loaded
 window.addEventListener("DOMContentLoaded", () => {
-    navigation.style.display = "none"; //[cite: 6]
+    navigation.style.display = "none";
 
     // Load saved avatar from localStorage with cache buster
-    const profilepicture = document.getElementById("profileimg"); //[cite: 6]
-    const user = JSON.parse(localStorage.getItem("user")); //[cite: 6]
+    const profilepicture = document.getElementById("profileimg");
+    const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.profileimg && profilepicture) {
         profilepicture.src = `${user.profileimg}?t=${Date.now()}`;
     }
@@ -17,77 +17,77 @@ window.addEventListener("DOMContentLoaded", () => {
 // Navigation Toggle
 menu.addEventListener('click', () => {
     if (navigation.style.display === "none") {
-        navigation.style.display = "block"; //[cite: 6]
+        navigation.style.display = "block";
     } else {
-        navigation.style.display = "none"; //[cite: 6]
+        navigation.style.display = "none";
     }
 });
 
 // Helper to render roster into #classcontent
 function displaystudents(students) {
-    classcontent.innerHTML = ""; // Clear existing records[cite: 6]
+    classcontent.innerHTML = ""; // Clear existing records
 
     if (!students || students.length === 0) {
-        classcontent.innerHTML = "<p>No students enrolled in this class.</p>"; //[cite: 6]
-        return; //[cite: 6]
+        classcontent.innerHTML = "<p>No students enrolled in this class.</p>";
+        return;
     }
 
-    const list = document.createElement("ul"); //[cite: 6]
-    list.className = "student-list"; //[cite: 6]
+    const list = document.createElement("ul");
+    list.className = "student-list";
 
     students.forEach(student => {
-        const item = document.createElement("li"); //[cite: 6]
-        const fullName = `${student.firstname} ${student.middlename ? student.middlename + ' ' : ''}${student.lastname}`; //[cite: 6]
-        item.textContent = `${fullName} (ID: ${student.studid})`; //[cite: 6]
-        list.appendChild(item); //[cite: 6]
+        const item = document.createElement("li");
+        const fullName = `${student.firstname} ${student.middlename ? student.middlename + ' ' : ''}${student.lastname}`;
+        item.textContent = `${fullName} (ID: ${student.studid})`;
+        list.appendChild(item);
     });
 
-    classcontent.appendChild(list); //[cite: 6]
+    classcontent.appendChild(list);
 }
 
 // Class Button Listeners
-const classbuttons = document.querySelectorAll(".class-btn"); //[cite: 6]
-let activeclass = null; //[cite: 6]
+const classbuttons = document.querySelectorAll(".class-btn");
+let activeclass = null;
 
 classbuttons.forEach((button) => {
     button.addEventListener("click", async (e) => {
-        e.preventDefault(); //[cite: 6]
-        const selectedclass = e.currentTarget.dataset.class; //[cite: 6]
+        e.preventDefault();
+        const selectedclass = e.currentTarget.dataset.class;
 
         if (activeclass === selectedclass) {
-            activeclass = null; //[cite: 6]
-            classcontent.style.display = "none"; //[cite: 6]
-            return; //[cite: 6]
+            activeclass = null;
+            classcontent.style.display = "none";
+            return;
         }
 
         try {
-            const token = localStorage.getItem("token"); //[cite: 6]
+            const token = localStorage.getItem("token");
 
             const response = await fetch("http://127.0.0.1:5000/api/classlist", {
-                method: "POST", //[cite: 6]
+                method: "POST",
                 headers: {
-                    "Content-Type": "application/json", //[cite: 6]
-                    "Authorization": `Bearer ${token}` //[cite: 6]
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ classname: selectedclass }) //[cite: 6]
+                body: JSON.stringify({ classname: selectedclass })
             });
 
-            const data = await response.json(); //[cite: 6]
+            const data = await response.json();
 
             if (data.success) {
-                displaystudents(data.students); //[cite: 6]
-                classcontent.style.display = "block"; //[cite: 6]
-                activeclass = selectedclass; //[cite: 6]
+                displaystudents(data.students);
+                classcontent.style.display = "block";
+                activeclass = selectedclass;
             } else {
-                alert("Class list could not be loaded: " + data.message); //[cite: 6]
+                alert("Class list could not be loaded: " + data.message);
                 if (response.status === 401 || response.status === 403) {
-                    localStorage.removeItem("token"); //[cite: 6]
-                    window.location.href = "signin.html"; //[cite: 6]
+                    localStorage.removeItem("token");
+                    window.location.href = "signin.html";
                 }
             }
         } catch (err) {
-            console.error("Error fetching class list:", err); //[cite: 6]
-            alert("An error occurred while trying to fetch the class list."); //[cite: 6]
+            console.error("Error fetching class list:", err);
+            alert("An error occurred while trying to fetch the class list.");
         }
     });
 });
@@ -98,7 +98,6 @@ const profilepicture = document.getElementById("profileimg");
 
 if (fileinput) {
     fileinput.addEventListener("change", async (event) => {
-        // Prevent any default behavior/form submission that could trigger a page reload
         event.preventDefault();
 
         const file = event.target.files[0];
@@ -110,7 +109,6 @@ if (fileinput) {
         const token = localStorage.getItem("token");
 
         try {
-            // Send file to server FIRST
             const response = await fetch("http://127.0.0.1:5000/api/upload-profile-image", {
                 method: "POST",
                 headers: {
@@ -126,12 +124,10 @@ if (fileinput) {
             const data = await response.json();
 
             if (data.success) {
-                // 1. Update localStorage FIRST so any subsequent reads get the new URL
                 const user = JSON.parse(localStorage.getItem("user")) || {};
                 user.profileimg = data.imageUrl;
                 localStorage.setItem("user", JSON.stringify(user));
 
-                // 2. Add timestamp cache buster and update the active image element
                 const freshUrl = `${data.imageUrl}?t=${Date.now()}`;
                 if (profilepicture) {
                     profilepicture.src = freshUrl;
@@ -144,6 +140,303 @@ if (fileinput) {
         } catch (err) {
             console.error("Error saving file:", err);
             alert("An error occurred while uploading your profile image.");
+        }
+    });
+}
+
+// Fetch and display topics dynamically via the course_preview endpoint when a subject is selected
+const subjectDropdown = document.getElementById('notessubject');
+const topicDropdown = document.getElementById('notestopic');
+const topicsContentContainer = document.getElementById('topiccontentcontainer');
+
+if (subjectDropdown && topicsContentContainer) {
+    subjectDropdown.addEventListener('change', async (e) => {
+        const selectedSubject = e.target.value;
+
+        if (!selectedSubject) {
+            if (topicDropdown) {
+                topicDropdown.innerHTML = '<option value="">-- Choose Topic First --</option>';
+            }
+            topicsContentContainer.innerHTML = '<p style="color: #cbd5e1; font-style: italic;">Select a subject above to view its curriculum topics.</p>';
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(`http://127.0.0.1:5000/api/course_preview?subjectname=${encodeURIComponent(selectedSubject)}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (data && data.length > 0 && data[0].topics) {
+                const rawTopics = data[0].topics;
+                
+                // Parse topics flexibly (supports both comma-separated strings or newline blocks)
+                let topicsArray = [];
+                if (typeof rawTopics === 'string') {
+                    topicsArray = rawTopics.includes(',') 
+                        ? rawTopics.split(',').map(t => t.trim()).filter(t => t.length > 0)
+                        : rawTopics.split('\n').map(t => t.trim()).filter(t => t.length > 0);
+                } else if (Array.isArray(rawTopics)) {
+                    topicsArray = rawTopics;
+                }
+
+                if (topicsArray.length === 0) {
+                    if (topicDropdown) {
+                        topicDropdown.innerHTML = '<option value="">-- No Topics Available --</option>';
+                    }
+                    topicsContentContainer.innerHTML = '<p style="color: #cbd5e1; font-style: italic;">No topics available for this subject.</p>';
+                    return;
+                }
+
+                // 1. Populate the Select Topic Dropdown for Notes
+                if (topicDropdown) {
+                    let topicOptionsHtml = '<option value="">-- Choose Topic --</option>';
+                    topicsArray.forEach(topicTitle => {
+                        topicOptionsHtml += `<option value="${topicTitle}">${topicTitle}</option>`;
+                    });
+                    topicDropdown.innerHTML = topicOptionsHtml;
+                }
+
+                // 2. Render modules nicely inside the Curriculum Topics card container
+                let topicsHtml = `<div class="topics-list-grid">`;
+                topicsArray.forEach((topicTitle, index) => {
+                    topicsHtml += `
+                        <div class="topic-item">
+                            <span class="topic-badge">Module ${index + 1}</span>
+                            <h3>${topicTitle}</h3>
+                            <p>${data[0].preview || 'Curriculum module for ' + selectedSubject}.</p>
+                        </div>
+                    `;
+                });
+                topicsHtml += `</div>`;
+                
+                topicsContentContainer.innerHTML = topicsHtml;
+            } else {
+                if (topicDropdown) {
+                    topicDropdown.innerHTML = '<option value="">-- No Topics Available --</option>';
+                }
+                topicsContentContainer.innerHTML = `<p style="color: #ff8080;">No course preview found for this subject.</p>`;
+            }
+        } catch (err) {
+            console.error("Error loading topics:", err);
+            if (topicDropdown) {
+                topicDropdown.innerHTML = '<option value="">-- Error Loading Topics --</option>';
+            }
+            topicsContentContainer.innerHTML = `<p style="color: #ff8080;">Could not load topics from server.</p>`;
+        }
+    });
+}
+
+// Give Assignment Handler
+const giveAssignmentBtn = document.getElementById('giveassignment');
+
+if (giveAssignmentBtn) {
+    giveAssignmentBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const subjectname = document.getElementById('assignmentsubject').value;
+        const classname = document.getElementById('assignmentclass').value;
+        const title = document.getElementById('assignmenttitle').value;
+        const content = document.getElementById('assignmenttextarea').value;
+
+        if (!subjectname || !classname || !content) {
+            alert("Please select a Subject, Class, and provide Assignment Instructions.");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch("http://127.0.0.1:5000/api/add-assignment", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ subjectname, classname, title, content })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("Assignment successfully posted to the class!");
+                // Clear the form fields
+                document.getElementById('assignmentsubject').value = "";
+                document.getElementById('assignmentclass').value = "";
+                document.getElementById('assignmenttitle').value = "";
+                document.getElementById('assignmenttextarea').value = "";
+            } else {
+                alert("Failed to post assignment: " + data.message);
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.removeItem("token");
+                    window.location.href = "signin.html";
+                }
+            }
+        } catch (err) {
+            console.error("Error posting assignment:", err);
+            alert("An error occurred while posting the assignment.");
+        }
+    });
+}
+
+// Standalone Curriculum Topics Subject Selector Handler
+const curriculumSubjectDropdown = document.getElementById('curriculumsubject');
+const topicContentContainer = document.getElementById('topiccontentcontainer');
+
+if (curriculumSubjectDropdown && topicContentContainer) {
+    curriculumSubjectDropdown.addEventListener('change', async (e) => {
+        const selectedSubject = e.target.value;
+
+        if (!selectedSubject) {
+            topicContentContainer.innerHTML = '<p style="color: #cbd5e1; font-style: italic;">Select a subject above to view its curriculum topics.</p>';
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+
+            // Fetch course preview data from your backend
+            const response = await fetch(`http://127.0.0.1:5000/api/course_preview?subjectname=${encodeURIComponent(selectedSubject)}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (data && data.length > 0 && data[0].topics) {
+                const rawTopics = data[0].topics;
+                
+                // Parse topics flexibly (supports comma-separated strings or newline blocks)
+                let topicsArray = [];
+                if (typeof rawTopics === 'string') {
+                    topicsArray = rawTopics.includes(',') 
+                        ? rawTopics.split(',').map(t => t.trim()).filter(t => t.length > 0)
+                        : rawTopics.split('\n').map(t => t.trim()).filter(t => t.length > 0);
+                } else if (Array.isArray(rawTopics)) {
+                    topicsArray = rawTopics;
+                }
+
+                if (topicsArray.length === 0) {
+                    topicContentContainer.innerHTML = '<p style="color: #cbd5e1; font-style: italic;">No topics available for this subject.</p>';
+                    return;
+                }
+
+                // Render modules nicely inside the Curriculum Topics container card
+                let topicsHtml = `<div class="topics-list-grid">`;
+                topicsArray.forEach((topicTitle, index) => {
+                    topicsHtml += `
+                        <div class="topic-item">
+                            <span class="topic-badge">Module ${index + 1}</span>
+                            <h3>${topicTitle}</h3>
+                            <p>${data[0].preview || 'Curriculum module for ' + selectedSubject}.</p>
+                        </div>
+                    `;
+                });
+                topicsHtml += `</div>`;
+                
+                topicContentContainer.innerHTML = topicsHtml;
+            } else {
+                topicContentContainer.innerHTML = `<p style="color: #ff8080;">No course preview found for this subject.</p>`;
+            }
+        } catch (err) {
+            console.error("Error loading curriculum topics:", err);
+            topicContentContainer.innerHTML = `<p style="color: #ff8080;">Could not load topics from server.</p>`;
+        }
+    });
+}
+
+// Navigation Buttons Handler
+const studentDashboardBtn = document.getElementById('student-dashboard');
+const logoutBtn = document.getElementById('logout');
+
+if (studentDashboardBtn) {
+    studentDashboardBtn.addEventListener('click', () => {
+        // Redirect to student dashboard route or page
+      const  confirmation=window.confirm("Do you want to move to the student dashboard?");
+      if(confirmation)
+        window.location.href = 'student.html'; // Adjust path if needed
+    });
+}
+
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        // Clear stored token / session data
+       const confirm = window.confirm("Do you want to log out?");
+       if(confirm){
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        
+        // Redirect to login page
+        window.location.href = 'index.html'; // Adjust path if needed
+
+       };
+    });
+}
+
+
+// Send Class Notes Handler
+const sendNotesBtn = document.getElementById('sendsavenotes');
+
+if (sendNotesBtn) {
+    sendNotesBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const subjectname = document.getElementById('notessubject').value;
+        const topicname = document.getElementById('notestopic').value;
+        const classname = document.getElementById('notesclass').value;
+        const title = document.getElementById('notestitle').value;
+        const content = document.getElementById('notestextarea').value;
+
+        if (!subjectname || !topicname || !classname || !title || !content) {
+            alert("Please fill in all fields (Subject, Topic, Class, Title, and Content) before sending.");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch("http://127.0.0.1:5000/api/add-note", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ subjectname, topicname, classname, title, content })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert("Notes successfully sent and linked to the topic!");
+                // Clear the form fields
+                document.getElementById('notessubject').value = "";
+                if (topicDropdown) {
+                    topicDropdown.innerHTML = '<option value="">-- Choose Topic First --</option>';
+                }
+                document.getElementById('notesclass').value = "";
+                document.getElementById('notestitle').value = "";
+                document.getElementById('notestextarea').value = "";
+                if (topicsContentContainer) {
+                    topicsContentContainer.innerHTML = '<p style="color: #cbd5e1; font-style: italic;">Select a subject above to view its curriculum topics.</p>';
+                }
+            } else {
+                alert("Failed to send notes: " + data.message);
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.removeItem("token");
+                    window.location.href = "signin.html";
+                }
+            }
+        } catch (err) {
+            console.error("Error submitting notes:", err);
+            alert("An error occurred while sending the notes.");
         }
     });
 }

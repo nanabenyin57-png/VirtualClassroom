@@ -42,3 +42,44 @@ Values('Math', 'This course covers topics in algebra, geometry, calculus, and st
              'Social Studies Course Preview');
 
 
+
+USE VirtualClassroom;
+
+CREATE TABLE ClassNotes (
+    note_id INT IDENTITY(1,1) PRIMARY KEY,
+    subjectname VARCHAR(50) NOT NULL,
+    classname VARCHAR(10) NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT GETDATE()
+);
+
+
+ALTER TABLE ClassNotes
+ADD topicname VARCHAR(150) NULL;
+
+SELECT * FROM ClassNotes;
+
+USE VirtualClassroom;
+USE VirtualClassroom;
+
+-- Add columns if they do not already exist in your table
+IF COL_LENGTH('Assignments', 'subjectname') IS NULL
+    ALTER TABLE Assignments ADD subjectname VARCHAR(150) NOT NULL DEFAULT 'General';
+
+IF COL_LENGTH('Assignments', 'classname') IS NULL
+    ALTER TABLE Assignments ADD classname VARCHAR(50) NOT NULL DEFAULT 'All';
+
+IF COL_LENGTH('Assignments', 'title') IS NULL
+    ALTER TABLE Assignments ADD title VARCHAR(150) NULL;
+
+IF COL_LENGTH('Assignments', 'content') IS NULL
+    ALTER TABLE Assignments ADD content TEXT NOT NULL DEFAULT '';
+
+IF COL_LENGTH('Assignments', 'created_at') IS NULL
+    ALTER TABLE Assignments ADD created_at DATETIME DEFAULT GETDATE();
+
+
+ALTER TABLE VirtualClassroom.dbo.assignments 
+ALTER COLUMN description VARCHAR(MAX) NULL;
+

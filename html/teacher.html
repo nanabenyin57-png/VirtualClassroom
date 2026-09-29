@@ -32,69 +32,185 @@
         <link rel="stylesheet" href="css/teacher.css">
     </head>
     <body>
-        <header>
-            <div class="logoinfo">
-                <img class="logo" src="images/K_TAwiah_LOgo.png" alt="K_Tawiah Logo"/>
-                <h1 class="title">K_Tawiah Virtual Classroom</h1>
-                <p class="details">
-                    <span class="welcome">Welcome to the teacher dashboard!</span>
-                </p>
-                   <!-- Profile Section -->
-            <div class="profile" id="teacherprofile">
-                <div class="profile-details">
-                    <div class="profiledisplay" id="dp">
-                        <label for="userprofile" class="profile-display" id="avatar">
-                        <img id="profileimg" src="images/default-avatar.jpg" alt="DP">
-                        </label>
+
+        <div class="dashboard-container">
+            <!-- Top Header Bar -->
+            <header class="top-header">
+                <div class="logoinfo">
+                    <img class="logo" src="images/K_TAwiah_LOgo.png" alt="K_Tawiah Logo"/>
+                    <h1 class="title">K_Tawiah Virtual Classroom</h1>
+                </div>
+
+                <div class="welcome-banner">
+                    <p class="details">
+                        <span class="welcome">Teacher Dashboard</span>
+                    </p>
+                </div>
+
+                <div class="header-right-section">
+                    <!-- Profile Section -->
+                    <div class="profile" id="teacherprofile">
+                        <div class="profile-details">
+                            <div class="profiledisplay" id="dp">
+                                <label for="userprofile" class="profile-display" id="avatar">
+                                    <img id="profileimg" src="images/default-avatar.jpg" alt="DP">
+                                </label>
+                            </div>
+                            <input type="file" id="userprofile" accept="image/*" class="hidden-file-input">
+                        </div>
                     </div>
-                    <input type="file" id="userprofile" accept="image/*">
-                </div>
-            <!-- Profile Section -->
-            </div>
-            </div>
-             <nav>
-            <button class="hamburger" id="hamburgermenu">&#9776;</button>
-            <div class="navi" id="navigation">
-                <ul class="links">
-                    <li><a href="index.html">HOME</a></li>
-                    <li><a href="signin.html">SIGN UP</a></li>
-                </ul>
-            </div>
-        </nav>
-        </header>
 
-
-        <section class="overview" id="dashboard">
-            <!-- Classes Section -->
-            <div class="overviewclass" id="classset">
-                <h1 class="overviewheading">CLASSES</h1> 
-                <button class="class-btn" data-class="jhs1">JHS1</button>  
-                <button class="class-btn" data-class="jhs2">JHS2</button>
-                <button class="class-btn" data-class="jhs3">JHS3</button>
-                <div class="classinfo" id="classcontent" style="display: none;">
-                    <!-- Dynamic class content renders here -->
+                    <!-- Navigation / Menu -->
+                    <nav>
+                        <button class="hamburger" id="hamburgermenu">&#9776;</button>
+                        <div class="navi" id="navigation">
+                            <ul class="links">
+                                <li><a href="index.html">HOME</a></li>
+                                <li><a href="signin.html">SIGN OUT</a></li>
+                            </ul>
+                        </div>
+                    </nav>
                 </div>
-            </div>
-<div class="cards-container">
-            <!-- Assignment Section -->
-            <div class="assignment" id="assignmentcard">
-                <article class="showassignment" id="assignmentgiven">
-                    <h1 class="assignment-heading">ASSIGNMENT</h1>
-                    <textarea class="assignmentarea" id="assignmenttextarea" placeholder="Please enter the assignment here..."></textarea>
-                    <br/>
-                    <button class="button4" id="giveassignment">Give Assignment</button>
-                </article>
-            </div>
+            </header>
 
-            <!-- Topics  Section -->
-            <div class="Topics" id="Topicslist">
-                <h1>TOPICS</h1>
-                <div class="courses-content">
-                    <!-- Reserved for course outline and materials -->
+            <!-- Main Overview Dashboard Content -->
+            <section class="overview" id="dashboard">
+                <!-- Classes Section -->
+                <div class="overviewclass classes-card" id="classset">
+                    <h2 class="overviewheading">CLASS MANAGEMENT & ROSTERS</h2> 
+                    <div class="class-buttons">
+                        <button class="class-btn" data-class="jhs1">JHS 1</button>  
+                        <button class="class-btn" data-class="jhs2">JHS 2</button>
+                        <button class="class-btn" data-class="jhs3">JHS 3</button>
+                    </div>
+                    <div class="classinfo" id="classcontent">
+                        <!-- Dynamic class content renders here -->
+                    </div>
                 </div>
-            </div>
-            </div>
-        </section>
+
+                <!-- Assignment & Topics Side-by-Side Grid Container -->
+                <div class="cards-container">
+                    <!-- Assignment Section -->
+                    <div class="assignment content-card" id="assignmentcard">
+                        <article class="showassignment" id="assignmentgiven">
+                            <h2 class="assignment-heading">GIVE ASSIGNMENT</h2>
+                            
+                            <div class="form-group">
+                                <label for="assignmentsubject">Select Subject:</label>
+                                <select id="assignmentsubject" class="dropdown-select">
+                                    <option value="">-- Choose Subject --</option>
+                                    <option value="Math">Math</option>
+                                    <option value="Science">Science</option>
+                                    <option value="English">English</option>
+                                    <option value="Social Studies">Social Studies</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="assignmentclass">Select Class:</label>
+                                <select id="assignmentclass" class="dropdown-select">
+                                    <option value="">-- Choose Class --</option>
+                                    <option value="jhs1">JHS 1</option>
+                                    <option value="jhs2">JHS 2</option>
+                                    <option value="jhs3">JHS 3</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="assignmenttitle">Assignment Title:</label>
+                                <input type="text" id="assignmenttitle" class="input-text" placeholder="Enter assignment title..." />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="assignmenttextarea">Assignment Instructions:</label>
+                                <textarea class="assignmentarea" id="assignmenttextarea" placeholder="Please enter the assignment details here..."></textarea>
+                            </div>
+
+                            <button class="button4 action-btn" id="giveassignment">Post Assignment</button>
+                        </article>
+                    </div>
+
+                    <!-- Topics Section -->
+                    <div class="Topics content-card" id="Topicslist">
+                        <h2 class="assignment-heading">CURRICULUM TOPICS</h2>
+                        
+                        <!-- Subject Selector for Topics Preview -->
+                        <div class="form-group curriculum-subject-group">
+                            <label for="curriculumsubject">Select Subject to Preview:</label>
+                            <select id="curriculumsubject" class="dropdown-select">
+                                <option value="">-- Choose Subject --</option>
+                                <option value="Math">Math</option>
+                                <option value="Science">Science</option>
+                                <option value="English">English</option>
+                                <option value="Social Studies">Social Studies</option>
+                            </select>
+                        </div>
+
+                        <div class="courses-content" id="topiccontentcontainer">
+                             <p class="placeholder-text">Select a subject above to view its curriculum topics.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Notes Section -->
+                <div class="notes-card content-card" id="notescard">
+                    <article class="shownotes" id="notesgiven">
+                        <h2 class="notes-heading">ADD CLASS NOTES</h2>
+                        
+                        <div class="notes-grid-form">
+                            <div class="form-group">
+                                <label for="notessubject">Select Subject:</label>
+                                <select id="notessubject" class="dropdown-select">
+                                    <option value="">-- Choose Subject --</option>
+                                    <option value="Math">Math</option>
+                                    <option value="Science">Science</option>
+                                    <option value="English">English</option>
+                                    <option value="Social Studies">Social Studies</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notestopic">Select Topic:</label>
+                                <select id="notestopic" class="dropdown-select">
+                                    <option value="">-- Choose Topic First --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notesclass">Select Class:</label>
+                                <select id="notesclass" class="dropdown-select">
+                                    <option value="">-- Choose Class --</option>
+                                    <option value="jhs1">JHS 1</option>
+                                    <option value="jhs2">JHS 2</option>
+                                    <option value="jhs3">JHS 3</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notestitle">Note Title:</label>
+                                <input type="text" id="notestitle" class="input-text" placeholder="Enter note title..." />
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="notestextarea">Note Content:</label>
+                            <textarea class="assignmentarea" id="notestextarea" placeholder="Type or paste the study notes here..."></textarea>
+                        </div>
+
+                        <button class="button4 action-btn" id="sendsavenotes">Send Notes</button>
+                    </article>
+                </div>
+
+                <!-- Navigation Card Section -->
+                <div class="content-card navigation-card" id="navigationcard">
+                    <h2 class="assignment-heading navigation-title">QUICK ACTIONS</h2>
+                    <div class="navigation-action-group">
+                        <button class="student action-nav-btn" id="student-dashboard">STUDENT DASHBOARD</button>
+                        <button class="logout action-nav-btn" id="logout">LOG OUT</button>
+                    </div>
+                </div>
+            </section>
+        </div>
 
         <script src="js/teacher.js"></script>
     </body>
