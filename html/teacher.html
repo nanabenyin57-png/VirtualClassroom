@@ -212,6 +212,47 @@
             </section>
         </div>
 
+        <!-- Submissions & Questions Side-by-Side Grid Container -->
+                <div class="cards-container">
+                    <!-- Submitted Assignments Section -->
+                    <div class="assignment content-card" id="submissionscard">
+                        <h2 class="assignment-heading">STUDENT ASSIGNMENT SUBMISSIONS</h2>
+                        <div class="feed-container" id="submissionslistcontainer">
+                            <p class="placeholder-text">Loading student submissions...</p>
+                        </div>
+                    </div>
+
+                    <!-- Student Questions Section -->
+                    <div class="Topics content-card" id="questionscard">
+                        <h2 class="assignment-heading">STUDENT QUESTIONS</h2>
+                        <div class="feed-container" id="questionslistcontainer">
+                            <p class="placeholder-text">Loading student questions...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Teaching Assistant Section -->
+                <div class="content-card ai-assistant-card" id="aiassistantcard">
+                    <article class="showassignment">
+                        <h2 class="assignment-heading">🤖 VIRTUAL AI TEACHING ASSISTANT</h2>
+                        <p class="placeholder-text" style="margin-bottom: 15px;">
+                            Ask the AI to help draft lesson plans, outline curriculum topics, or search internal records.
+                        </p>
+
+                        <div class="form-group full-width">
+                            <label for="aiprompt">Enter Prompt / Request:</label>
+                            <textarea class="assignmentarea" id="aiprompt" placeholder="e.g., Draft a comprehensive lesson outline for teaching algebraic expressions to JHS 2 students..."></textarea>
+                        </div>
+
+                        <button class="button4 action-btn" id="askai-btn">Generate AI Response</button>
+
+                        <div class="ai-response-container" id="airesponsebox" style="margin-top: 20px; display: none;">
+                            <h3 style="font-size: 1rem; color: #333; margin-bottom: 8px;">AI Response:</h3>
+                            <div class="feed-content" id="airesponsetext" style="background: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #ddd; white-space: pre-wrap; max-height: 400px; overflow-y: auto;"></div>
+                        </div>
+                    </article>
+                </div>
+
         <script src="js/teacher.js"></script>
     </body>
 </html>

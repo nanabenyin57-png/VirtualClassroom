@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { GoogleGenAI } = require('@google/genai');
 
 const app = express();
 app.use(express.json());
@@ -247,7 +248,7 @@ app.get('/api/course_preview', async (req, res) => {
     }
 });
 
-// Get Topics Endpoint (Required for dynamic topic dropdown population)
+// Get Topics Endpoint
 app.post('/api/get-topics', authenticateToken, async (req, res) => {
     const { subjectname } = req.body;
     try {
@@ -287,7 +288,6 @@ app.post('/api/classlist', authenticateToken, async (req, res) => {
 
     try {
         let pool = await sql.connect(dbConfig);
-        
         const result = await pool.request()
             .input('classname', sql.Char(4), classname)
             .query(`
@@ -338,12 +338,12 @@ app.post('/api/add-assignment', authenticateToken, async (req, res) => {
 
         res.status(200).json({ success: true, message: "Assignment successfully posted to the class!" });
     } catch (err) {
-        console.error("Error adding assignment:", err);
+        console.error("Error adding assignment:", err.message);
         res.status(500).json({ success: false, message: "Server error while posting assignment." });
     }
 });
 
-// Unified Add Class Notes API Endpoint (Linked to Subject, Topic, and Class)
+// Add Class Notes API Endpoint
 app.post('/api/add-note', authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'teacher') {
@@ -353,7 +353,7 @@ app.post('/api/add-note', authenticateToken, async (req, res) => {
         const { subjectname, topicname, classname, title, content } = req.body;
 
         if (!subjectname || !topicname || !classname || !title || !content) {
-            return res.status(400).json({ success: false, message: "All fields (Subject, Topic, Class, Title, and Content) are required." });
+            return res.status(400).json({ success: false, message: "All fields are required." });
         }
 
         const pool = await sql.connect(dbConfig);
@@ -370,14 +370,337 @@ app.post('/api/add-note', authenticateToken, async (req, res) => {
 
         res.status(200).json({ success: true, message: "Note successfully added and linked to the topic!" });
     } catch (err) {
-        console.error("Error adding note:", err);
+        console.error("Error adding note:", err.message);
         res.status(500).json({ success: false, message: "Server error while adding note." });
     }
 });
 
+// ==========================================
+// STUDENT DASHBOARD BACKEND API ENDPOINTS
+// ==========================================
 
-// 5. Start Server
+app.get('/api/assignments', authenticateToken, async (req, res) => {
+    try {
+        let pool = await sql.connect(dbConfig);
+        let queryStr = 'SELECT assignment_id AS id, subjectname, classname, title, content FROM Assignments';
+        let request = pool.request();
 
+        if (req.user.role === 'student') {
+            const studentResult = await pool.request()
+                .input('userid', sql.Int, req.user.userid)
+                .query('SELECT classname FROM students WHERE userid = @userid');
+            if (studentResult.recordset.length > 0) {
+                const studentClass = studentResult.recordset[0].classname;
+                queryStr += ' WHERE classname = @classname';
+                request.input('classname', sql.Char(4), studentClass);
+            }
+        }
+        queryStr += ' ORDER BY assignment_id DESC';
+        const result = await request.query(queryStr);
+        res.status(200).json(result.recordset);
+    } catch (err) {
+        console.error("Error fetching assignments:", err.message);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
+
+app.post('/api/submit-assignment', authenticateToken, async (req, res) => {
+    try {
+        const { assignment_id, content } = req.body;
+        const student_id = req.user.userid;
+
+        if (!assignment_id || !content) {
+            return res.status(400).json({ success: false, message: "Missing required fields." });
+        }
+
+        const pool = await sql.connect(dbConfig);
+        await pool.request()
+            .input('assignment_id', sql.Int, assignment_id)
+            .input('student_id', sql.Int, student_id)
+            .input('content', sql.Text, content)
+            .query(`
+                INSERT INTO AssignmentSubmissions (assignment_id, student_id, content)
+                VALUES (@assignment_id, @student_id, @content)
+            `);
+
+        res.status(200).json({ success: true, message: "Assignment submitted successfully." });
+    } catch (err) {
+        console.error("Error saving assignment submission:", err.message);
+        res.status(500).json({ success: false, message: "Server error during submission." });
+    }
+});
+
+app.get('/api/notes', authenticateToken, async (req, res) => {
+    try {
+        const { subjectname } = req.query;
+        if (!subjectname) {
+            return res.status(400).json({ success: false, message: "Subject name is required." });
+        }
+
+        let pool = await sql.connect(dbConfig);
+        const result = await pool.request()
+            .input('subjectname', sql.VarChar(50), subjectname)
+            .query('SELECT note_id AS id, subjectname, topicname, classname, title, content FROM ClassNotes WHERE subjectname = @subjectname ORDER BY note_id DESC');
+
+        res.status(200).json(result.recordset);
+    } catch (err) {
+        console.error("Error fetching class notes:", err.message);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
+
+app.post('/api/ask-question', authenticateToken, async (req, res) => {
+    try {
+        const { subjectname, title, content } = req.body;
+        const student_id = req.user.userid;
+
+        if (!subjectname || !title || !content) {
+            return res.status(400).json({ success: false, message: "All fields are required." });
+        }
+
+        let pool = await sql.connect(dbConfig);
+        await pool.request()
+            .input('student_id', sql.Int, student_id)
+            .input('subjectname', sql.VarChar(50), subjectname)
+            .input('title', sql.VarChar(200), title)
+            .input('content', sql.Text, content)
+            .query(`
+                INSERT INTO StudentQuestions (student_id, subjectname, title, content)
+                VALUES (@student_id, @subjectname, @title, @content, GETDATE())
+            `);
+
+        res.status(200).json({ success: true, message: "Question sent to teacher successfully." });
+    } catch (err) {
+        console.error("Error saving question:", err.message);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
+
+app.get('/api/teacher/submissions', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'teacher') {
+            return res.status(403).json({ success: false, message: "Unauthorized access" });
+        }
+
+        let pool = await sql.connect(dbConfig);
+        const result = await pool.request().query(`
+            SELECT 
+                sub.submission_id,
+                sub.assignment_id,
+                sub.content AS submission_content,
+                sub.submitted_at,
+                a.title AS assignment_title,
+                a.subjectname,
+                a.classname,
+                u.firstname,
+                u.lastname,
+                u.email
+            FROM AssignmentSubmissions sub
+            JOIN Assignments a ON sub.assignment_id = a.id
+            JOIN AppUsers u ON sub.student_id = u.user_id
+            ORDER BY sub.submitted_at DESC
+        `);
+
+        res.status(200).json({ success: true, submissions: result.recordset });
+    } catch (err) {
+        console.error("Error fetching teacher submissions:", err.message);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
+
+app.get('/api/teacher/questions', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'teacher') {
+            return res.status(403).json({ success: false, message: "Unauthorized access" });
+        }
+
+        let pool = await sql.connect(dbConfig);
+        const result = await pool.request().query(`
+            SELECT 
+                q.question_id,
+                q.subjectname,
+                q.title,
+                q.content,
+                q.created_at,
+                u.firstname,
+                u.lastname,
+                u.email
+            FROM StudentQuestions q
+            JOIN AppUsers u ON q.student_id = u.user_id
+            ORDER BY q.created_at DESC
+        `);
+
+        res.status(200).json({ success: true, questions: result.recordset });
+    } catch (err) {
+        console.error("Error fetching teacher questions:", err.message);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
+
+app.get('/api/database-search', authenticateToken, async (req, res) => {
+    try {
+        const { table, query } = req.query;
+
+        if (!query) {
+            return res.status(400).json({ success: false, message: "Search query string is required." });
+        }
+
+        const allowedTables = {
+            'course_preview': { source: 'course_preview', searchCols: ['title', 'preview', 'subjectname', 'topics'] },
+            'assignments': { source: 'Assignments', searchCols: ['title', 'content', 'subjectname', 'classname'] },
+            'classnotes': { source: 'ClassNotes', searchCols: ['title', 'content', 'subjectname', 'topicname'] }
+        };
+
+        let results = [];
+        let pool = await sql.connect(dbConfig);
+        const searchTerm = `%${query}%`;
+
+        if (table && table !== 'all') {
+            if (!allowedTables[table]) {
+                return res.status(403).json({ success: false, message: "Unauthorized or invalid table target." });
+            }
+            const cfg = allowedTables[table];
+            const whereClause = cfg.searchCols.map(col => `${col} LIKE @searchTerm`).join(' OR ');
+            const sqlQuery = `SELECT *, '${table}' AS source_table FROM ${cfg.source} WHERE ${whereClause}`;
+            
+            const result = await pool.request()
+                .input('searchTerm', sql.VarChar, searchTerm)
+                .query(sqlQuery);
+            results = result.recordset;
+        } else {
+            for (const [key, cfg] of Object.entries(allowedTables)) {
+                const whereClause = cfg.searchCols.map(col => `${col} LIKE @searchTerm_${key}`).join(' OR ');
+                const sqlQuery = `SELECT *, '${key}' AS source_table FROM ${cfg.source} WHERE ${whereClause}`;
+                
+                const result = await pool.request()
+                    .input(`searchTerm_${key}`, sql.VarChar, searchTerm)
+                    .query(sqlQuery);
+                results = results.concat(result.recordset);
+            }
+        }
+
+        res.status(200).json({ success: true, results });
+    } catch (err) {
+        console.error("Database search error:", err.message);
+        res.status(500).json({ success: false, message: "Error executing database search." });
+    }
+});
+
+// ==========================================
+// GEMINI AI ASSISTANT SERVICE & ENDPOINT
+// ==========================================
+
+const ai = new GoogleGenAI(); // Picks up GEMINI_API_KEY from process.env automatically
+
+async function queryDatabase({ queryText }) {
+    try {
+        let pool = await sql.connect(dbConfig); // Fixed: Added dbConfig connection
+        const result = await pool.request()
+            .input('search', sql.VarChar, `%${queryText}%`)
+            .query(`
+                SELECT TOP 5 title, content, subjectname 
+                FROM Assignments 
+                WHERE title LIKE @search OR content LIKE @search
+                UNION
+                SELECT TOP 5 title, content, subjectname 
+                FROM ClassNotes 
+                WHERE title LIKE @search OR content LIKE @search
+            `);
+        return JSON.stringify(result.recordset);
+    } catch (err) {
+        return JSON.stringify({ error: "Database search failed: " + err.message });
+    }
+}
+
+const databaseTool = {
+    declaration: {
+        name: "queryDatabase",
+        description: "Searches internal VirtualClassroom database tables (assignments and class notes) for relevant educational context.",
+        parameters: {
+            type: "OBJECT",
+            properties: {
+                queryText: {
+                    type: "STRING",
+                    description: "The keyword or topic to search for in assignments and notes."
+                }
+            },
+            required: ["queryText"]
+        }
+    },
+    implementation: queryDatabase
+};
+async function handleAIAssistantRequest(prompt, userRole) {
+    try {
+        const systemInstruction = `
+            You are an intelligent teaching and learning assistant inside the VirtualClassroom platform. 
+            Your role depends on who is asking:
+            - If the user is a STUDENT: Help answer their academic questions clearly, referencing course content or internal database records when necessary.
+            - If the user is a TEACHER: Assist them in drafting lesson notes, creating curriculum outlines, and structuring assignments.
+            You have access to Google Search built into your model settings to fetch real-world external knowledge, and a custom database tool to look up internal school files.
+        `;
+
+        // Initial call to Gemini using gemini-3.8-flash
+        const response = await ai.models.generateContent({
+            model: 'gemini-3.8-flash',
+            contents: prompt,
+            config: {
+                systemInstruction: systemInstruction,
+                tools: [{ googleSearch: {} }, databaseTool.declaration],
+                temperature: 0.7,
+            }
+        });
+
+        // Check if the model triggered a tool call (like querying the database)
+        const functionCalls = response.functionCalls;
+        if (functionCalls && functionCalls.length > 0) {
+            const call = functionCalls[0];
+            if (call.name === 'queryDatabase') {
+                // Execute local database search tool
+                const toolResult = await databaseTool.implementation(call.args);
+                
+                // Send tool execution output back to the model for final answer generation
+                const followUpResponse = await ai.models.generateContent({
+                    model: 'gemini-3.8-flash',
+                    contents: [
+                        { role: 'user', parts: [{ text: prompt }] },
+                        { role: 'model', parts: [{ functionCall: call }] },
+                        { role: 'function', parts: [{ functionResponse: { name: 'queryDatabase', response: { result: toolResult } } }] }
+                    ],
+                    config: { systemInstruction: systemInstruction }
+                });
+                return { success: true, answer: followUpResponse.text };
+            }
+        }
+
+        return { success: true, answer: response.text };
+
+    } catch (error) {
+        console.error("AI Assistant Error Details:", error);
+        if (error.status === 429) {
+            return { success: false, message: "AI Assistant is currently experiencing high traffic or quota limits. Please wait a moment and try again." };
+        }
+        return { success: false, message: "Failed to generate AI response: " + error.message };
+    }
+}
+
+// AI Assistant Route linked for frontend access
+app.post('/api/ai-assistant', authenticateToken, async (req, res) => {
+    const { prompt } = req.body;
+    const userRole = req.user.role; 
+
+    if (!prompt) {
+        return res.status(400).json({ success: false, message: "Prompt is required." });
+    }
+
+    const aiResult = await handleAIAssistantRequest(prompt, userRole);
+    if (aiResult.success) {
+        return res.status(200).json({ success: true, answer: aiResult.answer });
+    } else {
+        return res.status(500).json({ success: false, message: aiResult.message });
+    }
+});
+
+// 6. Start Server
 const PORT = process.env.PORT || 5000;
 async function startServer() {
     try {

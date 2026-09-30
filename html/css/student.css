@@ -1,0 +1,60 @@
+/* --- Student Dashboard Custom Styles --- */
+
+.search-bar-group {
+    display: grid;
+    grid-template-columns: 200px 1fr 120px;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.search-filter {
+    background-color: #FFFFFF;
+}
+
+.search-results-container {
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.feed-detail-box {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+    min-height: 80px;
+    font-size: 14px;
+    color: #e2e8f0;
+}
+
+.search-result-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    border-left: 4px solid var(--brand-warm);
+}
+
+.search-result-item h4 {
+    margin: 0 0 4px 0;
+    color: var(--brand-warm);
+    font-size: 14px;
+}
+
+.search-result-item p {
+    margin: 0;
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+@media screen and (max-width: 768px) {
+    .search-bar-group {
+        grid-template-columns: 100%;
+    }
+}

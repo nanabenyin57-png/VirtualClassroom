@@ -79,7 +79,40 @@ IF COL_LENGTH('Assignments', 'content') IS NULL
 IF COL_LENGTH('Assignments', 'created_at') IS NULL
     ALTER TABLE Assignments ADD created_at DATETIME DEFAULT GETDATE();
 
+    
+
 
 ALTER TABLE VirtualClassroom.dbo.assignments 
 ALTER COLUMN description VARCHAR(MAX) NULL;
 
+USE VirtualClassroom;
+
+SELECT * FROM AssignmentSubmissions;
+
+CREATE TABLE AssignmentSubmissions (
+    submission_id INT IDENTITY(1,1) PRIMARY KEY,
+    assignment_id INT NOT NULL,
+    student_id INT NOT NULL,
+    content TEXT NOT NULL,
+    submitted_at DATETIME DEFAULT GETDATE(),
+    
+    -- Foreign key constraints to ensure data integrity
+    CONSTRAINT FK_AssignmentSubmissions_Assignment FOREIGN KEY (assignment_id) 
+        REFERENCES Assignments(id) ON DELETE CASCADE,
+        
+    CONSTRAINT FK_AssignmentSubmissions_Student FOREIGN KEY (student_id) 
+        REFERENCES AppUsers(user_id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE StudentQuestions (
+    question_id INT IDENTITY(1,1) PRIMARY KEY,
+    student_id INT NOT NULL,
+    subjectname VARCHAR(50) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT GETDATE(),
+    
+    CONSTRAINT FK_StudentQuestions_User FOREIGN KEY (student_id) 
+        REFERENCES AppUsers(user_id) ON DELETE CASCADE
+);

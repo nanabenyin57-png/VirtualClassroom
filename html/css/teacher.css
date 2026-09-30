@@ -472,6 +472,49 @@ button.button4:hover {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.feed-list-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.feed-item {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.feed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.feed-date {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.feed-author {
+    font-size: 13px;
+    color: #cbd5e1;
+    margin: 4px 0 8px 0;
+}
+
+.feed-content-box {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    color: #f8fafc;
+    white-space: pre-wrap;
+}
+
 .navigation-title {
     margin: 0;
     font-size: 1.1rem;

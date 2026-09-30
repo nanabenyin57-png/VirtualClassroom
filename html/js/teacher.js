@@ -353,6 +353,102 @@ if (curriculumSubjectDropdown && topicContentContainer) {
     });
 }
 
+// Function to fetch and display student submissions
+async function loadTeacherSubmissions() {
+    const container = document.getElementById('submissionslistcontainer');
+    if (!container) return;
+
+    try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://127.0.0.1:5000/api/teacher/submissions", {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.submissions.length === 0) {
+                container.innerHTML = '<p class="placeholder-text">No student submissions received yet.</p>';
+                return;
+            }
+
+            let html = '<div class="feed-list-grid">';
+            data.submissions.forEach(sub => {
+                const dateStr = new Date(sub.submitted_at).toLocaleString();
+                html += `
+                    <div class="feed-item">
+                        <div class="feed-header">
+                            <span class="topic-badge">${sub.subjectname} (${sub.classname.toUpperCase()})</span>
+                            <span class="feed-date">${dateStr}</span>
+                        </div>
+                        <h3>${sub.assignment_title}</h3>
+                        <p class="feed-author"><strong>Student:</strong> ${sub.firstname} ${sub.lastname} (${sub.email})</p>
+                        <div class="feed-content-box">${sub.submission_content}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p class="placeholder-text" style="color: #ff8080;">Failed to load submissions.</p>';
+        }
+    } catch (err) {
+        console.error("Error loading submissions:", err);
+        container.innerHTML = '<p class="placeholder-text" style="color: #ff8080;">Error connecting to server.</p>';
+    }
+}
+
+// Function to fetch and display student questions
+async function loadTeacherQuestions() {
+    const container = document.getElementById('questionslistcontainer');
+    if (!container) return;
+
+    try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://127.0.0.1:5000/api/teacher/questions", {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.questions.length === 0) {
+                container.innerHTML = '<p class="placeholder-text">No student questions received yet.</p>';
+                return;
+            }
+
+            let html = '<div class="feed-list-grid">';
+            data.questions.forEach(q => {
+                const dateStr = new Date(q.created_at).toLocaleString();
+                html += `
+                    <div class="feed-item">
+                        <div class="feed-header">
+                            <span class="topic-badge">${q.subjectname}</span>
+                            <span class="feed-date">${dateStr}</span>
+                        </div>
+                        <h3>${q.title}</h3>
+                        <p class="feed-author"><strong>From:</strong> ${q.firstname} ${q.lastname} (${q.email})</p>
+                        <div class="feed-content-box">${q.content}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p class="placeholder-text" style="color: #ff8080;">Failed to load questions.</p>';
+        }
+    } catch (err) {
+        console.error("Error loading questions:", err);
+        container.innerHTML = '<p class="placeholder-text" style="color: #ff8080;">Error connecting to server.</p>';
+    }
+}
+
+// Initialize loading on DOM load
+window.addEventListener("DOMContentLoaded", () => {
+    loadTeacherSubmissions();
+    loadTeacherQuestions();
+});
+
 // Navigation Buttons Handler
 const studentDashboardBtn = document.getElementById('student-dashboard');
 const logoutBtn = document.getElementById('logout');
@@ -440,3 +536,60 @@ if (sendNotesBtn) {
         }
     });
 }
+
+// AI Assistant Frontend Integration
+document.addEventListener("DOMContentLoaded", () => {
+    const askAiBtn = document.getElementById("askai-btn");
+    const aiPromptInput = document.getElementById("aiprompt");
+    const aiResponseBox = document.getElementById("airesponsebox");
+    const aiResponseText = document.getElementById("airesponsetext");
+
+    if (askAiBtn) {
+        askAiBtn.addEventListener("click", async () => {
+            const prompt = aiPromptInput.value.trim();
+            const token = localStorage.getItem("token");
+
+            if (!prompt) {
+                alert("Please enter a prompt for the AI Assistant.");
+                return;
+            }
+
+            if (!token) {
+                alert("Session expired. Please log in again.");
+                window.location.href = "signin.html";
+                return;
+            }
+
+            // Show loading state
+            askAiBtn.disabled = true;
+            askAiBtn.textContent = "Generating AI Response...";
+            aiResponseBox.style.display = "block";
+            aiResponseText.textContent = "Thinking... Please wait.";
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/api/ai-assistant", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    aiResponseText.textContent = data.answer;
+                } else {
+                    aiResponseText.textContent = "Error: " + (data.message || "Failed to generate response.");
+                }
+            } catch (err) {
+                console.error("AI Network Error:", err);
+                aiResponseText.textContent = "Network error connecting to the AI assistant backend.";
+            } finally {
+                askAiBtn.disabled = false;
+                askAiBtn.textContent = "Generate AI Response";
+            }
+        });
+    }
+});
