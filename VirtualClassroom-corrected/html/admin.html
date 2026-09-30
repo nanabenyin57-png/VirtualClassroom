@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="authorr" content="Mr_Tawiah">
+
+<script>
+        //check for token
+        const token=localStorage.getItem("token");
+
+
+        if(!token){
+            alert("Please login in with your credentials to access the page!");
+            window.location.href="signin.html";
+        }
+
+//check for the role of the user
+        const user_role=JSON.parse(atob(token.split('.')[1]));
+        alert(user_role.role);
+        if(user_role.role!=="admin"){
+            alert("You are not authorized to access this page!");
+            window.location.href="signin.html";
+        }
+
+
+
+    </script>
+
+    <title>K_Tawiah Virtual Classroom</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="shortcut icon" href="#">
+
+    
+    </head>
+    <body>
+         <header>
+            <div class="logoinfo">
+                <img class="logo" src=" ../html/images/K_TAwiah_LOgo.png" alt="K_Tawiah Logo"/>
+                <h1 class="title">K_Tawiah Virtual Classroom</h1>
+                <p class="details">
+                    <span id="admin_welcome" class="welcome"> Welcome to the admin dashboards!</span>
+                    <br/>
+                </p>
+            </div>
+        </header>
+        <section class="add-notes">
+            <h2 class="add">
+                ADD NOTES
+            </h2>
+             <form id="addnotes" class="add_notes">
+                <div class="notetitle">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+                </div>
+                <br/>
+                <br/>
+                <div>
+                <label for="content">Content:</label>
+                <textarea id="content" name="content" rows="4" required></textarea>
+                <br/>
+                </div>
+                <button type="submit" class="add-button">Add Note</button>
+
+                </form>
+        </section>
+        <script src="js/config.js"></script>
+        <script src="js/admin.js"></script>
+    </body>
+</html>                

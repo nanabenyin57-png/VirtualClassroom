@@ -1,0 +1,58 @@
+html{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    scroll-behavior: smooth;
+}
+
+
+.title{
+    font-size: 120px;
+    color: rgba(103, 73, 116, 0.664);
+    text-shadow: 4px 8px 12px rgba(0, 0, 0, 0.8);
+    margin-top: -20px;
+    
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    border:6px solid rgba(12, 78, 67, 0.8);
+    border-radius: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    backdrop-filter: blur(17px);
+    -webkit-backdrop-filter: blur(17px);
+    box-shadow: 4px 6px 10px rgba(4, 9, 15, 0.8);
+    height: 280px;
+    width: 330px;
+    transition: all 0.3s ease;
+}
+
+.app-view {
+    display: none;
+    width: 100%;
+}
+
+.app-view.active-view {
+    display: flex;
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.nav-tab {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(9, 18, 27, 0.6);
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.nav-tab:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
