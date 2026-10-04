@@ -262,6 +262,107 @@ app.post('/api/addnotes', authenticateToken, async (req, res) => {
     }
 });
 
+//teacher grades submission endpoint
+app.post('/api/teacher/grade-submission', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+            return res.status(403).json({ success: false, message: "Unauthorized access." });
+        }
+
+        const { submission_id, score, remarks } = req.body;
+
+        if (!submission_id || score === undefined) {
+            return res.status(400).json({ success: false, message: "Submission ID and score are required." });
+        }
+
+        const pool = await sql.connect(dbConfig);
+        await pool.request()
+            .input('submission_id', sql.Int, submission_id)
+            .input('score', sql.Decimal(5, 2), score)
+            .input('remarks', sql.Text, remarks || '')
+            .query(`
+                UPDATE AssignmentSubmissions
+                SET score = @score, remarks = @remarks
+                WHERE submission_id = @submission_id
+            `);
+
+        res.status(200).json({ success: true, message: "Assignment graded and remarks sent successfully!" });
+    } catch (err) {
+        console.error("Error grading submission:", err.message);
+        res.status(500).json({ success: false, message: "Server error while grading submission." });
+    }
+});
+
+//student grades endpoint
+app.get('/api/student/grades', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'student') {
+            return res.status(403).json({ success: false, message: "Unauthorized access." });
+        }
+
+        const studentId = req.user.userid;
+        let pool = await sql.connect(dbConfig);
+        const result = await pool.request()
+            .input('student_id', sql.Int, studentId)
+            .query(`
+                SELECT 
+                    sub.submission_id,
+                    sub.content AS submission_content,
+                    sub.submitted_at,
+                    sub.score,
+                    sub.remarks,
+                    a.title AS assignment_title,
+                    a.subjectname,
+                    a.content AS assignment_instructions
+                FROM AssignmentSubmissions sub
+                JOIN Assignments a ON sub.assignment_id = a.id
+                WHERE sub.student_id = @student_id
+                ORDER BY sub.submitted_at DESC
+            `);
+
+        res.status(200).json({ success: true, grades: result.recordset });
+    } catch (err) {
+        console.error("Error fetching student grades:", err.message);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+});
+
+//admin add teacher endpoint
+app.post('/api/admin/add-teacher', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ success: false, message: "Unauthorized access." });
+        }
+
+        const { firstname, middlename, lastname, username, email, password } = req.body;
+
+        if (!firstname || !lastname || !email || !password) {
+            return res.status(400).json({ success: false, message: "Required fields are missing." });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        let pool = await sql.connect(dbConfig);
+
+        await pool.request()
+            .input('firstname', sql.VarChar(50), firstname)
+            .input('middlename', sql.VarChar(50), middlename || null)
+            .input('lastname', sql.VarChar(50), lastname)
+            .input('username', sql.VarChar(50), username || email)
+            .input('email', sql.VarChar(255), email)
+            .input('password', sql.VarChar(255), hashedPassword)
+            .input('role', sql.VarChar(15), 'teacher')
+            .query(`
+                INSERT INTO AppUsers (firstname, middlename, lastname, username, email, password, role)
+                VALUES (@firstname, @middlename, @lastname, @username, @email, @password, @role);
+            `);
+
+        res.status(201).json({ success: true, message: "Teacher account created successfully!" });
+    } catch (err) {
+        console.error("Error adding teacher:", err.message);
+        res.status(500).json({ success: false, message: "Server error while adding teacher." });
+    }
+});
+
 // Course preview endpoint
 app.get('/api/course_preview', async (req, res) => {
     const { subjectname } = req.query;

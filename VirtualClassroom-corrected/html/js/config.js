@@ -29,6 +29,12 @@ window.apiUrl = function apiUrl(path) {
     return window.API_BASE + path;
 };
 
+
+
+function apiUrl(endpoint) {
+    return endpoint;
+}
+
 // Turn a stored profile image path into something the browser can load.
 // The database stores '/uploads/xyz.jpeg'; older rows may hold a full
 // http://127.0.0.1:5000/... URL from before that was fixed — strip the

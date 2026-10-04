@@ -3,70 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="authorr" content="Mr_Tawiah">
-
-<script>
-        //check for token
-        const token=localStorage.getItem("token");
-
-
-        if(!token){
-            alert("Please login in with your credentials to access the page!");
-            window.location.href="signin.html";
-        }
-
-//check for the role of the user
-        const user_role=JSON.parse(atob(token.split('.')[1]));
-        alert(user_role.role);
-        if(user_role.role!=="admin"){
-            alert("You are not authorized to access this page!");
-            window.location.href="signin.html";
-        }
-
-
-
-    </script>
-
-    <title>K_Tawiah Virtual Classroom</title>
+    <title>Admin Dashboard - Virtual Classroom</title>
+    <!-- Linked stylesheets -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/admin.css">
-    <link rel="shortcut icon" href="#">
+</head>
+<body>
 
-    
-    </head>
-    <body>
-         <header>
-            <div class="logoinfo">
-                <img class="logo" src=" ../html/images/K_TAwiah_LOgo.png" alt="K_Tawiah Logo"/>
-                <h1 class="title">K_Tawiah Virtual Classroom</h1>
-                <p class="details">
-                    <span id="admin_welcome" class="welcome"> Welcome to the admin dashboards!</span>
-                    <br/>
-                </p>
+    <header>
+        <div class="logoinfo">
+            <h1 class="title">Virtual Classroom</h1>
+        </div>
+        <div class="header-right-section">
+            <div class="profiledisplay">
+                <label for="userprofile" class="profile-display">
+                    <img id="profileimg" src="images/default-avatar.png" alt="Profile Image">
+                </label>
+                <input type="file" id="userprofile" class="hidden-file-input" accept="image/*">
             </div>
-        </header>
-        <section class="add-notes">
-            <h2 class="add">
-                ADD NOTES
-            </h2>
-             <form id="addnotes" class="add_notes">
-                <div class="notetitle">
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" required>
+            <nav>
+                <button id="hamburgermenu" class="hamburger">&#9776;</button>
+                <div id="navigation" class="navi">
+                    <ul class="links">
+                        <li><a href="teacher.html">Teacher Dashboard</a></li>
+                        <li><a href="student.html">Student Dashboard</a></li>
+                        <li><a href="#" id="logout">Logout</a></li>
+                    </ul>
                 </div>
-                <br/>
-                <br/>
-                <div>
-                <label for="content">Content:</label>
-                <textarea id="content" name="content" rows="4" required></textarea>
-                <br/>
-                </div>
-                <button type="submit" class="add-button">Add Note</button>
+            </nav>
+        </div>
+    </header>
 
-                </form>
+    <main class="dashboard-container" style="margin-top: 100px; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 20px;">
+        <div class="welcome-container" style="text-align: center; margin-bottom: 30px;">
+            <h2 class="welcome">Welcome, Administrator</h2>
+            <p class="add">Manage System Records & Global Content</p>
+        </div>
+
+        <!-- Add Notes / Content Form Section -->
+        <section class="add-notes" style="position: relative; margin: 0 auto; width: 100%; max-width: 700px; height: auto; padding: 30px; display: flex; flex-direction: column; gap: 15px;">
+            <h3 style="color: var(--brand-warm, #f39c12); margin-top: 0;">Publish System Notice / Note</h3>
+            
+            <div class="form-group">
+                <label for="adminnotessubject">Subject / Category</label>
+                <select id="adminnotessubject" class="dropdown-select">
+                    <option value="">-- Choose Subject --</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Science">Science</option>
+                    <option value="General">General / Notice</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="notetitle">Title</label>
+                <input type="text" id="notetitle" class="input-text" placeholder="Enter title...">
+            </div>
+
+            <div class="form-group">
+                <label for="notecontent">Content Details</label>
+                <textarea id="notecontent" class="assignmentarea" placeholder="Enter full note content..."></textarea>
+            </div>
+
+            <button id="addnotebtn" class="button4">Publish Note</button>
         </section>
-        <script src="js/config.js"></script>
-        <script src="js/admin.js"></script>
-    </body>
-</html>                
+
+        <!-- Dynamic Admin Feed / Notes Container -->
+        <section class="overview" style="margin-top: 30px; width: 100%; max-width: 900px;">
+            <h3 class="overviewheading">System Activity & Published Notes</h3>
+            <div id="adminnotescontainer">
+                <p class="placeholder-text">Loading admin records...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Main application logic script -->
+    <script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,30 +1,41 @@
+// Global DOM elements & references
 const menu = document.getElementById('hamburgermenu');
 const navigation = document.getElementById('navigation');
+const profilepicture = document.getElementById("profileimg");
+const fileinput = document.getElementById("userprofile");
+const assignmentSelect = document.getElementById('studentassignmentselect');
+const assignmentDetailsBox = document.getElementById('assignmentdetailsbox');
+const submitAssignmentBtn = document.getElementById('submitassignmentbtn');
+const studentNotesSubject = document.getElementById('studentnotessubject');
+const studentNotesContainer = document.getElementById('studentnotescontainer');
+const sendQuestionBtn = document.getElementById('sendquestionbtn');
+const executeSearchBtn = document.getElementById('executesearch');
+const teacherDashboardBtn = document.getElementById('teacher-dashboard');
+const logoutBtn = document.getElementById('logout');
 
-// Run once when DOM is fully loaded
+// Run once when DOM is fully loaded (Unified Initialization)
 window.addEventListener("DOMContentLoaded", () => {
-    navigation.style.display = "none";
+    if (navigation) navigation.style.display = "none";
 
-    // Load saved avatar from localStorage
-    const profilepicture = document.getElementById("profileimg");
+    // Load saved avatar from localStorage with cache buster
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.profileimg && profilepicture) {
         profilepicture.src = `${user.profileimg}?t=${Date.now()}`;
     }
 
-    // Load available assignments on boot
+    // Initialize student dashboard data loaders
     loadStudentAssignments();
+    loadStudentGrades();
 });
 
 // Navigation Toggle
-menu.addEventListener('click', () => {
-    navigation.style.display = navigation.style.display === "none" ? "block" : "none";
-});
+if (menu && navigation) {
+    menu.addEventListener('click', () => {
+        navigation.style.display = (navigation.style.display === "none") ? "block" : "none";
+    });
+}
 
 // Profile Image Upload Handling
-const fileinput = document.getElementById("userprofile");
-const profilepicture = document.getElementById("profileimg");
-
 if (fileinput) {
     fileinput.addEventListener("change", async (event) => {
         event.preventDefault();
@@ -41,6 +52,8 @@ if (fileinput) {
                 headers: { "Authorization": `Bearer ${token}` },
                 body: formData
             });
+
+            if (!response.ok) throw new Error("Failed to upload profile image");
 
             const data = await response.json();
             if (data.success) {
@@ -59,9 +72,58 @@ if (fileinput) {
     });
 }
 
-// Load Assignments for Student
+// Load Student Grades & Remarks
+async function loadStudentGrades() {
+    const container = document.getElementById('studentgradescontainer');
+    if (!container) return;
+
+    try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(apiUrl('/api/student/grades'), {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.grades.length === 0) {
+                container.innerHTML = '<p class="placeholder-text">No assignments submitted yet.</p>';
+                return;
+            }
+
+            let html = '<div class="feed-list-grid">';
+            data.grades.forEach(item => {
+                const dateStr = new Date(item.submitted_at).toLocaleString();
+                const hasScore = item.score !== null && item.score !== undefined;
+
+                html += `
+                    <div class="feed-item">
+                        <div class="feed-header">
+                            <span class="topic-badge">${item.subjectname}</span>
+                            <span class="feed-date">Submitted: ${dateStr}</span>
+                        </div>
+                        <h3>${item.assignment_title}</h3>
+                        <p><strong>Your Answer:</strong> ${item.submission_content}</p>
+                        <div style="margin-top: 10px; background: #f8fafc; padding: 10px; border-radius: 6px; border-left: 4px solid ${hasScore ? '#10b981' : '#f59e0b'};">
+                            <p><strong>Score:</strong> ${hasScore ? `<span style="color: #10b981; font-weight: bold;">${item.score}</span>` : '<span style="color: #f59e0b;">Pending Teacher Evaluation</span>'}</p>
+                            <p><strong>Teacher Remarks:</strong> ${item.remarks || 'No remarks provided yet.'}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p class="placeholder-text" style="color: #ff8080;">Could not load grades.</p>';
+        }
+    } catch (err) {
+        console.error("Error loading grades:", err);
+        container.innerHTML = '<p class="placeholder-text" style="color: #ff8080;">Network error loading grades.</p>';
+    }
+}
+
+// Load Assignments for Student Dropdown
 async function loadStudentAssignments() {
-    const assignmentSelect = document.getElementById('studentassignmentselect');
     if (!assignmentSelect) return;
 
     try {
@@ -80,14 +142,11 @@ async function loadStudentAssignments() {
             assignmentSelect.innerHTML = optionsHtml;
         }
     } catch (err) {
-        console.error("Error loading assignments:", err)
+        console.error("Error loading assignments:", err);
     }
 }
 
 // Handle Assignment Selection Details Display
-const assignmentSelect = document.getElementById('studentassignmentselect');
-const assignmentDetailsBox = document.getElementById('assignmentdetailsbox');
-
 if (assignmentSelect && assignmentDetailsBox) {
     assignmentSelect.addEventListener('change', (e) => {
         const selectedOption = e.target.selectedOptions[0];
@@ -101,12 +160,12 @@ if (assignmentSelect && assignmentDetailsBox) {
 }
 
 // Submit Assignment Handler
-const submitAssignmentBtn = document.getElementById('submitassignmentbtn');
 if (submitAssignmentBtn) {
     submitAssignmentBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        const assignmentId = assignmentSelect.value;
-        const submissionContent = document.getElementById('nativesubmissiontextarea').value;
+        const assignmentId = assignmentSelect ? assignmentSelect.value : '';
+        const submissionTextArea = document.getElementById('nativesubmissiontextarea');
+        const submissionContent = submissionTextArea ? submissionTextArea.value : '';
 
         if (!assignmentId || !submissionContent) {
             alert("Please select an assignment and write your submission answer.");
@@ -127,23 +186,21 @@ if (submitAssignmentBtn) {
             const data = await response.json();
             if (data.success) {
                 alert("Assignment submitted successfully!");
-                document.getElementById('nativesubmissiontextarea').value = "";
-                assignmentSelect.value = "";
-                assignmentDetailsBox.innerHTML = '<p class="placeholder-text">Select an assignment above to read instructions.</p>';
+                if (submissionTextArea) submissionTextArea.value = "";
+                if (assignmentSelect) assignmentSelect.value = "";
+                if (assignmentDetailsBox) assignmentDetailsBox.innerHTML = '<p class="placeholder-text">Select an assignment above to read instructions.</p>';
+                loadStudentGrades(); // Refresh grades view
             } else {
                 alert("Submission failed: " + data.message);
             }
         } catch (err) {
-            console.error("Error submitting assignment:", err)
+            console.error("Error submitting assignment:", err);
             alert("An error occurred while submitting your assignment.");
         }
     });
 }
 
 // Load Class Notes for Student
-const studentNotesSubject = document.getElementById('studentnotessubject');
-const studentNotesContainer = document.getElementById('studentnotescontainer');
-
 if (studentNotesSubject && studentNotesContainer) {
     studentNotesSubject.addEventListener('change', async (e) => {
         const subject = e.target.value;
@@ -177,20 +234,23 @@ if (studentNotesSubject && studentNotesContainer) {
                 studentNotesContainer.innerHTML = '<p style="color: #ff8080;">No class notes available for this subject.</p>';
             }
         } catch (err) {
-            console.error("Error fetching notes:", err)
+            console.error("Error fetching notes:", err);
             studentNotesContainer.innerHTML = '<p style="color: #ff8080;">Could not retrieve class notes.</p>';
         }
     });
 }
 
 // Ask Question Handler
-const sendQuestionBtn = document.getElementById('sendquestionbtn');
 if (sendQuestionBtn) {
     sendQuestionBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        const subjectname = document.getElementById('questionsubject').value;
-        const title = document.getElementById('questiontitle').value;
-        const content = document.getElementById('questiontextarea').value;
+        const subjectnameInput = document.getElementById('questionsubject');
+        const questionTitleInput = document.getElementById('questiontitle');
+        const questionTextArea = document.getElementById('questiontextarea');
+
+        const subjectname = subjectnameInput ? subjectnameInput.value : '';
+        const title = questionTitleInput ? questionTitleInput.value : '';
+        const content = questionTextArea ? questionTextArea.value : '';
 
         if (!subjectname || !title || !content) {
             alert("Please fill in the subject, question title, and details.");
@@ -211,34 +271,38 @@ if (sendQuestionBtn) {
             const data = await response.json();
             if (data.success) {
                 alert("Your question has been sent to the teacher!");
-                document.getElementById('questionsubject').value = "";
-                document.getElementById('questiontitle').value = "";
-                document.getElementById('questiontextarea').value = "";
+                if (subjectnameInput) subjectnameInput.value = "";
+                if (questionTitleInput) questionTitleInput.value = "";
+                if (questionTextArea) questionTextArea.value = "";
             } else {
                 alert("Failed to send question: " + data.message);
             }
         } catch (err) {
-            console.error("Error sending question:", err)
+            console.error("Error sending question:", err);
             alert("An error occurred while sending your question.");
         }
     });
 }
 
-// Database Search Handler (Restricted to course_preview, assignments, classnotes tables)
-const executeSearchBtn = document.getElementById('executesearch');
+// Database Search Handler
 if (executeSearchBtn) {
     executeSearchBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        const tableName = document.getElementById('searchtable').value;
-        const query = document.getElementById('searchquery').value.trim();
+        const searchTableInput = document.getElementById('searchtable');
+        const searchQueryInput = document.getElementById('searchquery');
         const resultsContainer = document.getElementById('searchresults');
+
+        const tableName = searchTableInput ? searchTableInput.value : '';
+        const query = searchQueryInput ? searchQueryInput.value.trim() : '';
 
         if (!query) {
             alert("Please enter keywords to search.");
             return;
         }
 
-        resultsContainer.innerHTML = '<p class="placeholder-text">Searching database...</p>';
+        if (resultsContainer) {
+            resultsContainer.innerHTML = '<p class="placeholder-text">Searching database...</p>';
+        }
 
         try {
             const token = localStorage.getItem("token");
@@ -248,31 +312,32 @@ if (executeSearchBtn) {
             });
             const data = await response.json();
 
-            if (data.success && data.results && data.results.length > 0) {
-                let html = '';
-                data.results.forEach(row => {
-                    html += `
-                        <div class="search-result-item">
-                            <h4>[${row.source_table || tableName}] ${row.title || row.subjectname || 'Record'}</h4>
-                            <p>${row.content || row.preview || row.topics || JSON.stringify(row)}</p>
-                        </div>
-                    `;
-                });
-                resultsContainer.innerHTML = html;
-            } else {
-                resultsContainer.innerHTML = '<p style="color: #cbd5e1; font-style: italic;">No matching records found in course previews, assignments, or class notes.</p>';
+            if (resultsContainer) {
+                if (data.success && data.results && data.results.length > 0) {
+                    let html = '';
+                    data.results.forEach(row => {
+                        html += `
+                            <div class="search-result-item">
+                                <h4>[${row.source_table || tableName}] ${row.title || row.subjectname || 'Record'}</h4>
+                                <p>${row.content || row.preview || row.topics || JSON.stringify(row)}</p>
+                            </div>
+                        `;
+                    });
+                    resultsContainer.innerHTML = html;
+                } else {
+                    resultsContainer.innerHTML = '<p style="color: #cbd5e1; font-style: italic;">No matching records found in course previews, assignments, or class notes.</p>';
+                }
             }
         } catch (err) {
-            console.error("Search error:", err)
-            resultsContainer.innerHTML = '<p style="color: #ff8080;">An error occurred while searching the database.</p>';
+            console.error("Search error:", err);
+            if (resultsContainer) {
+                resultsContainer.innerHTML = '<p style="color: #ff8080;">An error occurred while searching the database.</p>';
+            }
         }
     });
 }
 
 // Navigation Actions (Switching back to Teacher Dashboard or Logging Out)
-const teacherDashboardBtn = document.getElementById('teacher-dashboard');
-const logoutBtn = document.getElementById('logout');
-
 if (teacherDashboardBtn) {
     teacherDashboardBtn.addEventListener('click', () => {
         if (window.confirm("Do you want to switch to the teacher dashboard?")) {
@@ -300,7 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (askStudentAiBtn) {
         askStudentAiBtn.addEventListener("click", async () => {
-            const prompt = studentAiPromptInput.value.trim();
+            const prompt = studentAiPromptInput ? studentAiPromptInput.value.trim() : '';
             const token = localStorage.getItem("token");
 
             if (!prompt) {
@@ -314,11 +379,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Show loading state
             askStudentAiBtn.disabled = true;
             askStudentAiBtn.textContent = "Thinking...";
-            studentAiResponseBox.style.display = "block";
-            studentAiResponseText.textContent = "Searching course records and generating answer...";
+            if (studentAiResponseBox) studentAiResponseBox.style.display = "block";
+            if (studentAiResponseText) studentAiResponseText.textContent = "Searching course records and generating answer...";
 
             try {
                 const response = await fetch(apiUrl('/api/ai-assistant'), {
@@ -333,13 +397,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    studentAiResponseText.textContent = data.answer;
+                    if (studentAiResponseText) studentAiResponseText.textContent = data.answer;
                 } else {
-                    studentAiResponseText.textContent = "Error: " + (data.message || "Failed to generate response.");
+                    if (studentAiResponseText) studentAiResponseText.textContent = "Error: " + (data.message || "Failed to generate response.");
                 }
             } catch (err) {
-                console.error("AI Network Error:", err)
-                studentAiResponseText.textContent = "Network error connecting to the AI assistant backend.";
+                console.error("AI Network Error:", err);
+                if (studentAiResponseText) studentAiResponseText.textContent = "Network error connecting to the AI assistant backend.";
             } finally {
                 askStudentAiBtn.disabled = false;
                 askStudentAiBtn.textContent = "Ask AI Assistant";

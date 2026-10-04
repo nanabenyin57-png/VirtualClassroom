@@ -116,3 +116,10 @@ CREATE TABLE StudentQuestions (
     CONSTRAINT FK_StudentQuestions_User FOREIGN KEY (student_id) 
         REFERENCES AppUsers(user_id) ON DELETE CASCADE
 );
+
+
+USE VirtualClassroom;
+
+-- Add score and remarks columns to AssignmentSubmissions if they don't exist
+ALTER TABLE AssignmentSubmissions ADD score DECIMAL(5,2) NULL;
+ALTER TABLE AssignmentSubmissions ADD remarks TEXT NULL;
