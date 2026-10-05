@@ -17,10 +17,10 @@ const logoutBtn = document.getElementById('logout');
 window.addEventListener("DOMContentLoaded", () => {
     if (navigation) navigation.style.display = "none";
 
-    // Load saved avatar from localStorage with cache buster
+    // Load saved avatar from localStorage with cache buster and apiUrl base resolution
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.profileimg && profilepicture) {
-        profilepicture.src = `${user.profileimg}?t=${Date.now()}`;
+        profilepicture.src = `${apiUrl(user.profileimg)}?t=${Date.now()}`;
     }
 
     // Initialize student dashboard data loaders
@@ -60,7 +60,9 @@ if (fileinput) {
                 const user = JSON.parse(localStorage.getItem("user")) || {};
                 user.profileimg = data.imageUrl;
                 localStorage.setItem("user", JSON.stringify(user));
-                if (profilepicture) profilepicture.src = `${data.imageUrl}?t=${Date.now()}`;
+                if (profilepicture) {
+                    profilepicture.src = `${apiUrl(data.imageUrl)}?t=${Date.now()}`;
+                }
                 alert("Profile image uploaded successfully!");
             } else {
                 alert("Upload failed: " + data.message);
@@ -189,7 +191,7 @@ if (submitAssignmentBtn) {
                 if (submissionTextArea) submissionTextArea.value = "";
                 if (assignmentSelect) assignmentSelect.value = "";
                 if (assignmentDetailsBox) assignmentDetailsBox.innerHTML = '<p class="placeholder-text">Select an assignment above to read instructions.</p>';
-                loadStudentGrades(); // Refresh grades view
+                loadStudentGrades();
             } else {
                 alert("Submission failed: " + data.message);
             }

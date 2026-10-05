@@ -7,7 +7,6 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { GoogleGenAI } = require('@google/genai');
 
 const app = express();
 app.use(express.json());
@@ -82,7 +81,6 @@ app.post('/api/upload-profile-image', authenticateToken, upload.single('profilei
             return res.status(400).json({ success: false, message: 'No image file uploaded.' });
         }
 
-        // Store a relative path so the database stays portable across hosts/domains
         const imageUrl = `/uploads/${req.file.filename}`;
         const userId = req.user.userid;
 
@@ -233,8 +231,6 @@ app.post('/api/login', async (req, res) => {
 // ADMIN NOTES API
 // ==========================================
 
-// Add a standalone note (the admin dashboard's "ADD NOTES" form posts here).
-// Notes here are general: they are not tied to a subject, topic or class.
 app.post('/api/addnotes', authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'admin') {
@@ -262,7 +258,6 @@ app.post('/api/addnotes', authenticateToken, async (req, res) => {
     }
 });
 
-//teacher grades submission endpoint
 app.post('/api/teacher/grade-submission', authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
@@ -293,7 +288,6 @@ app.post('/api/teacher/grade-submission', authenticateToken, async (req, res) =>
     }
 });
 
-//student grades endpoint
 app.get('/api/student/grades', authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'student') {
@@ -327,7 +321,6 @@ app.get('/api/student/grades', authenticateToken, async (req, res) => {
     }
 });
 
-//admin add teacher endpoint
 app.post('/api/admin/add-teacher', authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'admin') {
@@ -363,7 +356,6 @@ app.post('/api/admin/add-teacher', authenticateToken, async (req, res) => {
     }
 });
 
-// Course preview endpoint
 app.get('/api/course_preview', async (req, res) => {
     const { subjectname } = req.query;
     try {
@@ -383,7 +375,6 @@ app.get('/api/course_preview', async (req, res) => {
     }
 });
 
-// Get Topics Endpoint
 app.post('/api/get-topics', authenticateToken, async (req, res) => {
     const { subjectname } = req.body;
     try {
@@ -410,7 +401,6 @@ app.post('/api/get-topics', authenticateToken, async (req, res) => {
     }
 });
 
-// Classlist endpoint
 app.post('/api/classlist', authenticateToken, async (req, res) => {
     const { classname } = req.body;
 
@@ -447,7 +437,6 @@ app.post('/api/classlist', authenticateToken, async (req, res) => {
     }
 });
 
-// Give Assignment API Endpoint
 app.post('/api/add-assignment', authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'teacher') {
@@ -478,7 +467,6 @@ app.post('/api/add-assignment', authenticateToken, async (req, res) => {
     }
 });
 
-// Add Class Notes API Endpoint
 app.post('/api/add-note', authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'teacher') {
@@ -509,10 +497,6 @@ app.post('/api/add-note', authenticateToken, async (req, res) => {
         res.status(500).json({ success: false, message: "Server error while adding note." });
     }
 });
-
-// ==========================================
-// STUDENT DASHBOARD BACKEND API ENDPOINTS
-// ==========================================
 
 app.get('/api/assignments', authenticateToken, async (req, res) => {
     try {
@@ -686,8 +670,6 @@ app.get('/api/database-search', authenticateToken, async (req, res) => {
             'classnotes': { source: 'ClassNotes', searchCols: ['title', 'content', 'subjectname', 'topicname'] }
         };
 
-        // 'all' is a legitimate value meaning "search every table", so only
-        // reject a table name that is neither 'all' nor in the allowlist.
         if (table && table !== 'all' && !allowedTables[table]) {
             return res.status(403).json({ success: false, message: "Unauthorized or invalid table target." });
         }
@@ -697,9 +679,6 @@ app.get('/api/database-search', authenticateToken, async (req, res) => {
         const searchTerm = `%${query}%`;
 
         if (table && table !== 'all') {
-            if (!allowedTables[table]) {
-                return res.status(403).json({ success: false, message: "Unauthorized or invalid table target." });
-            }
             const cfg = allowedTables[table];
             const whereClause = cfg.searchCols.map(col => `${col} LIKE @searchTerm`).join(' OR ');
             const sqlQuery = `SELECT *, '${table}' AS source_table FROM ${cfg.source} WHERE ${whereClause}`;
@@ -728,14 +707,15 @@ app.get('/api/database-search', authenticateToken, async (req, res) => {
 });
 
 // ==========================================
-// GEMINI AI ASSISTANT SERVICE & ENDPOINT
+// OPENAI AI ASSISTANT SERVICE & ENDPOINT
 // ==========================================
 
-const ai = new GoogleGenAI(); // Picks up GEMINI_API_KEY from process.env automatically
+const { OpenAI } = require('openai');
+const openai = new OpenAI(); // Automatically picks up OPENAI_API_KEY from process.env
 
 async function queryDatabase({ queryText }) {
     try {
-        let pool = await sql.connect(dbConfig); // Fixed: Added dbConfig connection
+        let pool = await sql.connect(dbConfig); 
         const result = await pool.request()
             .input('search', sql.VarChar, `%${queryText}%`)
             .query(`
@@ -753,23 +733,28 @@ async function queryDatabase({ queryText }) {
     }
 }
 
-const databaseTool = {
-    declaration: {
+const databaseToolDefinition = {
+    type: "function",
+    function: {
         name: "queryDatabase",
         description: "Searches internal VirtualClassroom database tables (assignments and class notes) for relevant educational context.",
         parameters: {
-            type: "OBJECT",
+            type: "object",
             properties: {
                 queryText: {
-                    type: "STRING",
+                    type: "string",
                     description: "The keyword or topic to search for in assignments and notes."
                 }
             },
             required: ["queryText"]
         }
-    },
-    implementation: queryDatabase
+    }
 };
+
+const availableTools = {
+    queryDatabase: queryDatabase
+};
+
 async function handleAIAssistantRequest(prompt, userRole) {
     try {
         const systemInstruction = `
@@ -777,66 +762,68 @@ async function handleAIAssistantRequest(prompt, userRole) {
             Your role depends on who is asking:
             - If the user is a STUDENT: Help answer their academic questions clearly, referencing course content or internal database records when necessary.
             - If the user is a TEACHER: Assist them in drafting lesson notes, creating curriculum outlines, and structuring assignments.
-            You have access to Google Search built into your model settings to fetch real-world external knowledge, and a custom database tool to look up internal school files.
+            You have access to a custom database tool to look up internal school files when needed.
         `;
 
-        // Initial call to Gemini using gemini-2.5-flash
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: {
-                systemInstruction: systemInstruction,
-                tools: [{ googleSearch: {} }, databaseTool.declaration],
-                temperature: 0.7,
-            }
+        let messages = [
+            { role: "system", content: systemInstruction },
+            { role: "user", content: prompt }
+        ];
+
+        const completion = await openai.chat.completions.create({
+            model: 'gpt-4o-mini', // You can change this to 'gpt-4o' if preferred
+            messages: messages,
+            tools: [databaseToolDefinition],
+            tool_choice: 'auto',
+            temperature: 0.7,
         });
 
-        // Check if the model triggered a tool call (like querying the database)
-        const functionCalls = response.functionCalls;
-        if (functionCalls && functionCalls.length > 0) {
-            // Answer every function call the model made, not just the first.
-            // Gemini expects one functionResponse part per functionCall; skipping
-            // any of them leaves the follow-up turn malformed.
-            const responseParts = await Promise.all(functionCalls.map(async (call) => {
-                let result;
-                try {
-                    result = call.name === 'queryDatabase'
-                        ? await databaseTool.implementation(call.args)
-                        : JSON.stringify({ error: `Unknown tool: ${call.name}` });
-                } catch (toolErr) {
-                    result = JSON.stringify({ error: toolErr.message });
-                }
-                return { functionResponse: { name: call.name, response: { result } } };
-            }));
+        const responseMessage = completion.choices[0].message;
 
-            const followUpResponse = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: [
-                    { role: 'user', parts: [{ text: prompt }] },
-                    // Replay the model's own turn verbatim. Rebuilding it as
-                    // { functionCall: call } drops the thoughtSignature that
-                    // Gemini thinking models require on the function-call part,
-                    // which makes the API reject the follow-up with a 400.
-                    response.candidates[0].content,
-                    { role: 'user', parts: responseParts }
-                ],
-                config: { systemInstruction: systemInstruction }
+        if (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
+            messages.push(responseMessage);
+
+            for (const toolCall of responseMessage.tool_calls) {
+                const functionName = toolCall.function.name;
+                const functionArgs = JSON.parse(toolCall.function.arguments);
+                
+                let toolResult;
+                try {
+                    if (availableTools[functionName]) {
+                        toolResult = await availableTools[functionName](functionArgs);
+                    } else {
+                        toolResult = JSON.stringify({ error: `Unknown tool: ${functionName}` });
+                    }
+                } catch (toolErr) {
+                    toolResult = JSON.stringify({ error: toolErr.message });
+                }
+
+                messages.push({
+                    role: "tool",
+                    tool_call_id: toolCall.id,
+                    content: toolResult
+                });
+            }
+
+            const secondCompletion = await openai.chat.completions.create({
+                model: 'gpt-4o-mini',
+                messages: messages,
             });
-            return { success: true, answer: followUpResponse.text };
+
+            return { success: true, answer: secondCompletion.choices[0].message.content };
         }
 
-        return { success: true, answer: response.text };
+        return { success: true, answer: responseMessage.content };
 
     } catch (error) {
-        console.error("AI Assistant Error Details:", error);
+        console.error("OpenAI AI Assistant Error Details:", error);
         if (error.status === 429) {
-            return { success: false, message: "AI Assistant is currently experiencing high traffic or quota limits. Please wait a moment and try again." };
+            return { success: false, message: "AI Assistant is currently experiencing high traffic or rate limits. Please wait a moment and try again." };
         }
         return { success: false, message: "Failed to generate AI response: " + error.message };
     }
 }
 
-// AI Assistant Route linked for frontend access
 app.post('/api/ai-assistant', authenticateToken, async (req, res) => {
     const { prompt } = req.body;
     const userRole = req.user.role; 
@@ -853,23 +840,8 @@ app.post('/api/ai-assistant', authenticateToken, async (req, res) => {
     }
 });
 
-// 6. Start Server
+// Start Server
 const PORT = process.env.PORT || 5000;
-async function startServer() {
-    try {
-        console.log("🔄 Connecting to MS SQL Server inside Docker...");
-        await sql.connect(dbConfig);
-        console.log("🚀 Connected to MS SQL Server inside Docker successfully!");
-        
-        app.listen(PORT, () => {
-            console.log(`📡 Backend API active at http://127.0.0.1:${PORT}`);
-            console.log("Control + C to stop the server anytime.");
-        });
-    } catch (err) {
-        console.error("❌ Critical Database connection failed on startup!");
-        console.error(err.message);
-        process.exit(1); 
-    }
-}
-
-startServer();
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});

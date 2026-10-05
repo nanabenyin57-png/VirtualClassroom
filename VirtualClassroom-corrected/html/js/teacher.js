@@ -9,10 +9,10 @@ const fileinput = document.getElementById("userprofile");
 window.addEventListener("DOMContentLoaded", () => {
     if (navigation) navigation.style.display = "none";
 
-    // Load saved avatar from localStorage with cache buster
+    // Load saved avatar from localStorage with cache buster and apiUrl base resolution
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.profileimg && profilepicture) {
-        profilepicture.src = `${user.profileimg}?t=${Date.now()}`;
+        profilepicture.src = `${apiUrl(user.profileimg)}?t=${Date.now()}`;
     }
 
     // Initialize dashboard data loaders
@@ -124,7 +124,7 @@ if (fileinput) {
                 localStorage.setItem("user", JSON.stringify(user));
 
                 if (profilepicture) {
-                    profilepicture.src = `${data.imageUrl}?t=${Date.now()}`;
+                    profilepicture.src = `${apiUrl(data.imageUrl)}?t=${Date.now()}`;
                 }
                 alert("Profile image uploaded successfully!");
             } else {
